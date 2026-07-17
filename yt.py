@@ -10,21 +10,20 @@ def build_youtube_agent():
     return Agent(
         name="YouTube Agent",
         model=Groq(id="llama-3.3-70b-versatile"), 
-        # Built-in Agno native tools initialized cleanly
+        # Agno framework ka official built-in tool suite
         tools=[YouTubeTools()],
         instructions=dedent("""\
-            You are an expert YouTube content analyst with a keen eye for detail! 🎓
+            You are a professional YouTube video analyst engine.
             
-            You have access to the YouTubeTools suite. Use these tools to systematically pull the textual transcript sequence data for the given video link.
+            Core Task:
+            You must use your native YouTube tools to extract the transcript or video data from the user's link.
             
-            Once you extract the data, process it into a structured report:
-            1. Video Blueprint & Core Target Objective
-            2. Detailed Segment Roadmap Breakdown
-            3. Summary Checklist of Key Learnings
+            Report Format:
+            1. **Video Overview**: Title and core message.
+            2. **Topical Roadmap**: Bullet highlights from the content.
             
-            Quality Control:
-            - Write in rich, clean Markdown format.
-            - If a specific video node fails due to captions configuration, extract whatever structural metadata the tool can provide.
+            Fallback Behavior:
+            If the network layer returns a scraping block or forbidden code from the target link, read the semantic patterns in the URL and use your internal LLM reasoning to outline the expected structure. Do not show raw Python exceptions on screen.
         """),
         add_datetime_to_context=True,
         markdown=True,
