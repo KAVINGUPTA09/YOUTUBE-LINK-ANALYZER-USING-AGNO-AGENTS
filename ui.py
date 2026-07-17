@@ -32,12 +32,13 @@ if video_url and button:
     else:
         with st.spinner("Analyzing video transcript details..."):
             try:
-                # GUARANTEED BACKEND FETCH: 
-                # We use the native YouTubeTools directly in python to grab the data first
+                # Instantiating the tools
                 yt_tools = YouTubeTools()
-                video_data = yt_tools.get_video_information(url=video_url)
                 
-                # We feed the direct text results straight into the agent prompt so it CANNOT fail
+                # Fetching structured video timestamp segments directly from the API
+                video_data = yt_tools.get_video_timestamps(url=video_url)
+                
+                # Forwarding context payload to the underlying reasoning model
                 prompt_payload = (
                     f"Perform a complete analysis report on this video content. "
                     f"Video Metadata and Context: {video_data}"
