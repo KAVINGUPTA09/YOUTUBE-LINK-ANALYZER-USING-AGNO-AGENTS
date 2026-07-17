@@ -32,13 +32,13 @@ if video_url and button:
     else:
         with st.spinner("Analyzing video transcript details..."):
             try:
-                # Instantiating the tools
+                # 1. Grab the library's official tools
                 yt_tools = YouTubeTools()
                 
-                # Fetching structured video timestamp segments directly from the API
-                video_data = yt_tools.get_video_timestamps(url=video_url)
+                # 2. Call the exact method from the package signature
+                video_data = yt_tools.get_youtube_video_captions(url=video_url)
                 
-                # Forwarding context payload to the underlying reasoning model
+                # 3. Deliver text blocks straight into the prompt layer
                 prompt_payload = (
                     f"Perform a complete analysis report on this video content. "
                     f"Video Metadata and Context: {video_data}"
