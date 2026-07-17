@@ -11,7 +11,7 @@ st.set_page_config(
 st.title("🎥 AI Youtube Video Analyzer")
 
 def get_transcript(video_id):
-    # Safe multi-language extraction directly through python backend
+    # Using the exact library function call explicitly
     transcript_list = YouTubeTranscriptApi.get_transcript(video_id, languages=['en', 'ar'])
     return " ".join([f"[{item['start']}] {item['text']}" for item in transcript_list])
 
@@ -19,14 +19,12 @@ video_url = st.text_input("Enter Youtube Video Link")
 button = st.button("Analyze Video") 
 
 if video_url and button:
-    # Safe regex mapping to capture standard and short youtube URLs
     video_id_match = re.search(r'(?:v=|\/|youtu\.be\/)([0-9A-Za-z_-]{11})', video_url)
     
     if video_id_match:
         video_id = video_id_match.group(1)
         with st.spinner("Fetching and analyzing video details..."):
             try:
-                # Direct background execution bypassing faulty model loops
                 transcript_text = get_transcript(video_id)
                 
                 agent = build_youtube_agent()
