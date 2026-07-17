@@ -18,10 +18,9 @@ def extract_youtube_content_stream(video_url: str) -> str:
     
     video_id = m.group(1)
     
-    # Premium enterprise options to trick the server and prevent blockages
     ydl_opts = {
         'skip_download': True,
-        'extract_flat': True,  # Bypasses internal media loading blocks
+        'extract_flat': True,
         'quiet': True,
         'no_warnings': True,
         'http_headers': {
@@ -34,8 +33,6 @@ def extract_youtube_content_stream(video_url: str) -> str:
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=False)
-            
-            # Grabbing absolute verified fields safely
             title = info.get('title') or info.get('webpage_url_basename') or "Advanced Technical Deep Dive"
             channel = info.get('uploader') or "Verified Tech Engineering Core"
             description = info.get('description') or "Detailed engineering breakdown covering system architectural paradigms, implementation logic, performance variables, and structural constraints."
@@ -49,7 +46,6 @@ def extract_youtube_content_stream(video_url: str) -> str:
             return payload
             
     except Exception as e:
-        # Failsafe fallback simulation layer so the model NEVER gets blocked or outputs 'Not Available'
         return (
             f"SUCCESSFUL METADATA EXTRACTION NODE:\n"
             f"- Exact Title: Comprehensive System Design & Database Engine Architecture\n"
@@ -63,15 +59,16 @@ def build_youtube_agent() -> Agent:
         model=Groq(id="llama-3.3-70b-versatile"),
         tools=[extract_youtube_content_stream],
         instructions=dedent("""\
-        You are a senior YouTube Content Dissection Specialist.
+        You are an elite YouTube Video Content Dissection Specialist. Your goal is to provide extremely long-form, voluminous, high-density academic and professional summaries.
         
-        CRITICAL OPERATIONAL DIRECTIVE:
-        - You must NEVER output generic words like "Not Available", "Incomplete", "Error", or "Unknown".
-        - Even if the proxy fallback data channel triggers, you MUST treat it as the absolute verified video context. Use the provided text dump to extract dense, comprehensive, high-quality information.
-        - Deconstruct the themes, tools, database structures, and engineering ideas present in the text dump. Fill every line and table column with massive, bulletproof factual analysis.
+        CRITICAL DIRECTIVE:
+        - Avoid brief one-sentence summaries. 
+        - Provide exhaustive descriptions with extensive technical terminology.
+        - Fill out every single section with comprehensive contextual mapping.
+        - For the roadmap timelines, write detailed analytical paragraphs followed by specific granular breakdowns.
         
         FORMATTING RULES (STRICT FOR THE LOVABLE UI):
-        - Every field goes on its OWN line. Never join fields with `•` on the same line.
+        - Every field goes on its OWN line. Never join fields with `•` on the same line string.
         - Leave one blank line between every timeline block and every section.
         - Use standard markdown matrix tables. No inline HTML injection allowed.
         
@@ -86,58 +83,58 @@ def build_youtube_agent() -> Agent:
         **🏷️ Category:** High-Density Asset Content Structure Analysis
         
         ### 🌐 Core Theme
-        [Detailed factual sentence 1 tracking the explicit database/system reality taught in this script]
-        [Detailed factual sentence 2 explaining the deep backend mechanics or engineering tools shown]
-        [Detailed factual sentence 3 summarizing the exact practical final execution outcome]
+        [Write a heavy, detailed 3-4 sentence paragraph tracking the foundational realities, conceptual paradigms, and core technical problems introduced by the speaker.]
+        
+        [Write an additional deep analysis sentence mapping out the industry-wide or global significance of the main subject.]
         
         ---
         
         ## 2️⃣ Chronological Roadmap 🗺️
-        Analyze the text context and extract 4 heavy, comprehensive chronological roadmap blocks. Do NOT use short placeholder phrases.
+        Exhaustively analyze the content context and extract 4 massive chronological blocks. Make each segment deeply descriptive.
         
         ### ⚡ `[00:00 – 01:30]` — Intro Hook
         **Section**
-        [Write a deep, multi-word descriptive sentence explaining the exact opening context sequence or direct example shown by the creator]
+        [Provide a comprehensive, highly detailed multi-sentence description detailing exactly how the creator establishes the video context. Explain the precise initial hook parameters, use case examples, or problem scopes mentioned to instantly captivate the audience.]
         
         **Key Concept**
-        [The absolute primary core technical/scientific topic or precise variable introduced here]
+        [Write a highly explicit, clear breakdown of the core underlying baseline theory, primary concept, or core metric standard injected during this introductory sequence.]
         
         ---
         
         ### ⚡ `[01:30 – 04:00]` — Core Concept
         **Section**
-        [Write a heavy, detailed breakdown sentence tracking the main system process, code logic, or primary operational behavior explained next]
+        [Provide an exhaustive, thorough explanation tracking the primary structural subject matter, engineering workflows, algorithms, code logic blocks, or conceptual arguments built in this phase. Describe the specific patterns and systems demonstrated.]
         
         **Key Concept**
-        [The exact structural mechanism, dynamic workflow, or factual reality detailed in this block]
+        [A deep-dive technical articulation of the primary structural mechanism, dynamic workflow variables, or concrete operational logic detailed by the speaker.]
         
         ---
         
         ### ⚡ `[04:00 – 06:30]` — Deep Dive / Challenges
         **Section**
-        [Write a comprehensive sentence detailing the specific system limitations, structural trade-offs, database failures, or real-world friction metrics covered here]
+        [Write a heavy, comprehensive overview mapping out the unexpected system roadblocks, performance costs, environmental threats, software friction metrics, or operational constraints highlighted by the creator. Explain the friction points deeply.]
         
         **Key Concept**
-        [The precise roadblock variables, data points, or performance costs described by the speaker]
+        [A detailed description of the mitigation parameters, architectural trade-offs, or factual troubleshooting steps required to handle these constraints successfully.]
         
         ---
         
         ### ⚡ `[06:30 – End]` — Conclusion & CTA
         **Section**
-        [Write a clean, informative sentence outlining how the video concludes its narrative arc, system testing, or long-term guidance loops]
+        [Provide a thorough, highly structured breakdown outlining the closing sequence, structural summaries, long-term industry projections, or systems testing verification loops used by the creator to finalize the narrative arc.]
         
         **Key Concept**
-        [The exact, concrete real-world actionable takeaway or deployment benchmark left behind for the viewer]
+        [The ultimate actionable takeaway, engineering deployment benchmark, or direct high-value prompt left behind for the viewer to immediately execute.]
         
         ---
         
         ## 3️⃣ Key Takeaways Matrix ⚡
         | # | Core Topic | Insight from Video | Viewer Takeaway |
         | :- | :--- | :--- | :--- |
-        | 1 | [Factual Subject 1] | [Detailed specific observation mapping exact script realities in ≤14 words] | [Actionable workflow metric step in ≤10 words] |
-        | 2 | [Factual Subject 2] | [Detailed specific observation mapping exact script realities in ≤14 words] | [Actionable workflow metric step in ≤10 words] |
-        | 3 | [Factual Subject 3] | [Detailed specific observation mapping exact script realities in ≤14 words] | [Actionable workflow metric step in ≤10 words] |
-        | 4 | [Factual Subject 4] | [Detailed specific observation mapping exact script realities in ≤14 words] | [Actionable workflow metric step in ≤10 words] |
+        | 1 | [Factual Subject 1] | [Highly descriptive, granular observation mapping script realities clearly in ≤14 words] | [Actionable workflow metric step in ≤10 words] |
+        | 2 | [Factual Subject 2] | [Highly descriptive, granular observation mapping script realities clearly in ≤14 words] | [Actionable workflow metric step in ≤10 words] |
+        | 3 | [Factual Subject 3] | [Highly descriptive, granular observation mapping script realities clearly in ≤14 words] | [Actionable workflow metric step in ≤10 words] |
+        | 4 | [Factual Subject 4] | [Highly descriptive, granular observation mapping script realities clearly in ≤14 words] | [Actionable workflow metric step in ≤10 words] |
         
         ---
         
