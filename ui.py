@@ -1,6 +1,6 @@
 import streamlit as st
 import re
-import youtube_transcript_api
+from youtube_transcript_api import YouTubeTranscriptApi
 from yt import build_youtube_agent
 
 st.set_page_config(
@@ -34,13 +34,15 @@ if video_url and button:
             
             transcript_context = ""
             try:
-                # FOOLPROOF FIX: We call the standalone functional module method directly
-                transcript_list = youtube_transcript_api.YouTubeTranscriptApi.get_transcript(video_id)
+                # Direct module function call passing explicit fallback languages
+                transcript_list = YouTubeTranscriptApi.get_transcript(
+                    video_id, 
+                    languages=['ar', 'en']
+                )
                 transcript_context = " ".join([f"[{item['start']}] {item['text']}" for item in transcript_list])
             except Exception as e:
                 transcript_context = f"ERROR_FETCHING: {str(e)}"
             
-            # CRITICAL CHECK: If the transcript failed to download, show the error directly to the user
             if "ERROR_FETCHING:" in transcript_context:
                 st.error(f"Failed to extract transcript from YouTube: {transcript_context}")
             else:
