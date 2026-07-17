@@ -1,19 +1,19 @@
 import streamlit as st
 import re
-from youtube_transcript_api import YouTubeTranscriptApi
+import youtube_transcript_api
 from yt import build_youtube_agent
 
 st.set_page_config(page_title="Youtube Video Analyzer", layout="centered")
 st.title("🎥 AI Youtube Video Analyzer")
 
 def get_transcript(video_id):
-    # Direct operational array assignment mapping
-    # Bypassing secondary dynamic functions to stop attribute errors
     try:
-        transcript_list = YouTubeTranscriptApi.get_transcript(video_id, languages=['en', 'ar'])
+        # Bypassing the broken Class reference entirely 
+        # Calling the standalone direct execution function from the core module
+        transcript_list = youtube_transcript_api.get_transcript(video_id, languages=['en', 'ar'])
         return " ".join([f"[{item['start']}] {item['text']}" for item in transcript_list])
     except Exception as e:
-        raise Exception(f"Transcript fetch active block failed: {str(e)}")
+        raise Exception(f"Direct backend operational stream failed: {str(e)}")
 
 video_url = st.text_input("Enter Youtube Video Link") 
 button = st.button("Analyze Video") 
