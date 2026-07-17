@@ -9,12 +9,6 @@ st.set_page_config(
 
 st.title("🎥 AI Youtube Video Analyzer")
 
-@st.cache_resource
-def get_agent():
-    return build_youtube_agent()
-
-agent = get_agent()
-
 video_url = st.text_input("Enter Youtube Video Link") 
 button = st.button("Analyze Video") 
 
@@ -25,6 +19,9 @@ if video_url and button:
     if video_id_match:
         with st.spinner("Agent is running tools to analyze the video..."):
             try:
+                # Direct safe instantiation per dynamic execution block
+                agent = build_youtube_agent()
+                
                 # Direct link handoff to the Agno Agent layer
                 prompt_payload = f"Please extract the transcript and analyze this video: {video_url}"
                 response = agent.run(prompt_payload)
