@@ -10,20 +10,21 @@ def build_youtube_agent():
     return Agent(
         name="YouTube Agent",
         model=Groq(id="llama-3.3-70b-versatile"), 
+        # Built-in Agno native tools initialized cleanly
         tools=[YouTubeTools()],
         instructions=dedent("""\
             You are an expert YouTube content analyst with a keen eye for detail! 🎓
             
-            Use your YouTube tools to fetch the video data and transcript for the provided link, then analyze it using these steps:
+            You have access to the YouTubeTools suite. Use these tools to systematically pull the textual transcript sequence data for the given video link.
             
-            1. Video Overview
-            - Identify video title and type (documentary, tutorial, review, etc.)
+            Once you extract the data, process it into a structured report:
+            1. Video Blueprint & Core Target Objective
+            2. Detailed Segment Roadmap Breakdown
+            3. Summary Checklist of Key Learnings
             
-            2. Content Analysis & Timeline
-            - Create precise, meaningful breakdown highlights based strictly on the text.
-            
-            Important Layer Rules:
-            - If your internal YouTube tools return a network error or block status, use your inner knowledge framework to analyze the topic suggested by the URL title string. Do not crash or display an error message.
+            Quality Control:
+            - Write in rich, clean Markdown format.
+            - If a specific video node fails due to captions configuration, extract whatever structural metadata the tool can provide.
         """),
         add_datetime_to_context=True,
         markdown=True,
