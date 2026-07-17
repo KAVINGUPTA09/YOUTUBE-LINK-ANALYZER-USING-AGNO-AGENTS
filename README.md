@@ -97,4 +97,5 @@ This workspace is optimized for Streamlit Community Cloud:
 
 ## 📄 Live Link
 
-youtube-link-analyzer-using-agno-agents-vy3fhudyzdgvftdzywycrh
+https://youtube-link-analyzer-using-agno-agents-erggp6b3gxgxtb8xn9dz2n.streamlit.app/
+
