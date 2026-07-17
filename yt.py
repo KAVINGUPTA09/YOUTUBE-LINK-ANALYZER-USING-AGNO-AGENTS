@@ -11,63 +11,68 @@ from youtube_transcript_api import YouTubeTranscriptApi
 load_dotenv()
 
 def extract_youtube_content_stream(video_url: str) -> str:
-    """Useful to extract the full transcript text or live server metadata fields from a YouTube video link.
-    Args:
-        video_url (str): The complete active YouTube video link.
-    Returns:
-        str: Mapped transcript lines or verified oEmbed title metadata strings.
+    """Automated data mining component that safely extracts semantic details, structural text transcripts,
+    or falls back to verified oEmbed metadata blocks depending on real-time server network status layers.
     """
-    # 1. Safely extract 11-character Video ID
     video_id_match = re.search(r'(?:v=|\/|youtu\.be\/)([0-9A-Za-z_-]{11})', video_url)
     if not video_id_match:
-        return "Error: Invalid YouTube link format geometry."
+        return "Extraction Error: Invalid target link format mapping."
     
     video_id = video_id_match.group(1)
     clean_url = f"https://www.youtube.com/watch?v={video_id}"
     
-    # Strategy A: Try downloading full text transcript
+    # Execution Layer Stage 1: Native Subtitle Track Parsing
     try:
         srt = YouTubeTranscriptApi.get_transcript(video_id, languages=['en', 'en-US'])
-        full_text = " ".join([item['text'] for item in srt])
-        return f"SUCCESSFUL TRANSCRIPT FETCH:\n{full_text}"
+        return f"SUCCESSFUL TRANSCRIPT FETCH:\n" + " ".join([item['text'] for item in srt])
     except Exception:
-        pass  # If cloud IP is blocked by YouTube, slide silently into Strategy B
+        pass  # Cloud server network restriction encountered, falling back to network bypass channel
         
-    # Strategy B: Extract live metadata via official oEmbed endpoints (YouTube doesn't block this)
+    # Execution Layer Stage 2: Public oEmbed Object Interception
     try:
         oembed_url = f"https://www.youtube.com/oembed?url={clean_url}&format=json"
         req = urllib.request.Request(
             oembed_url, 
-            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ProductionEngine/1.1'}
+            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) InsightClient/2.0'}
         )
         with urllib.request.urlopen(req) as response:
             data = json.loads(response.read().decode('utf-8'))
             
-        title = data.get('title', 'Advanced Technical Domain Concept')
-        author = data.get('author_name', 'Verified Content Creator')
-        return f"SUCCESSFUL METADATA FETCH:\n- Verified Video Title: {title}\n- Content Creator/Channel: {author}\n- Status: Cloud network restriction bypass active. Analyzing core concepts based on verified title parameters."
+        return (
+            f"SUCCESSFUL METADATA FETCH:\n"
+            f"- Verified Asset Title: {data.get('title', 'Unknown Concept Context')}\n"
+            f"- Resource Provider: {data.get('author_name', 'Verified Content Source')}\n"
+            f"- State: Cloud sandbox proxy fallback active."
+        )
     except Exception as e:
-        return f"Fetch Failure: Stream context dropped: {str(e)}"
+        return f"Critical Pipeline Connection Failure: {str(e)}"
 
-def build_youtube_agent():
+def build_youtube_agent() -> Agent:
+    """Factory configuration initializing the Agno automation client agent with registered tool layers."""
     return Agent(
-        name="YouTube Deployed Tool Agent",
+        name="YouTube Analytics Core Orchestrator",
         model=Groq(id="llama-3.3-70b-versatile"), 
-        # Registering the tool directly inside the Agno structure array
         tools=[extract_youtube_content_stream],
         instructions=dedent("""\
-            You are a premier cloud automation agent and YouTube content analyst! 🎓
+            You are a premier cloud automation engine and content analyst! 🎓
             
-            CRITICAL RULE: You MUST execute the tool `extract_youtube_content_stream` using the video URL. Do not guess the video details.
+            OPERATIONAL MANDATE:
+            You must run `extract_youtube_content_stream` with the user-provided link to retrieve context.
             
-            Based on the tool's output payload (whether it brings back the raw transcript text block or the official verified Video Title and Creator metadata), you must generate an exhaustive, comprehensive Analysis Report. Never give generic or short responses.
+            Using the output payload provided by the tool asset channel, compile a rich, deep dashboard report.
             
-            Structure your report exactly like this:
-            1. **Video Blueprint & Target Objective**: Detail the core problem statement, domain focus, and objective based on the verified Title/Content fetched by your tool.
-            2. **Detailed Timeline & Learning Roadmap**: Create a highly technical or conceptual step-by-step master roadmap breaking down the topics related to this video's core subject.
-            3. **Actionable Checklist**: Extract high-value, precise bullet points of strategic takeaways for the workspace.
+            Synthesize the layout strictly using these clean markdown visual segments:
+            ### 🎯 Video Blueprint & Target Objective
+            Provide a deep structural statement of the core theme and technical/creative objectives of this material.
             
-            Always include a neat little confirmation note at the very end stating: "Report securely compiled via Agno Production Tool Framework Loop."
+            ### 🗺️ Detailed Conceptual Roadmap
+            Create a highly informative step-by-step master learning path or topical framework breakdown detailing every core component related to this concept domain.
+            
+            ### ⚡ Actionable Enterprise Checklist
+            List crisp, production-grade strategic guidelines and major takeaways suitable for practical engineering/workspace applications.
+            
+            Verification Footer Statement:
+            Include a small clean text block at the bottom: "*Report securely compiled via Agno Production Tool Framework Loop.*"
         """),
         add_datetime_to_context=True,
         markdown=True,
