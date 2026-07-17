@@ -1,51 +1,41 @@
 import streamlit as st
 import re
+from youtube_transcript_api import YouTubeTranscriptApi
 from yt import build_youtube_agent
-from agno.tools.youtube import YouTubeTools
 
 st.set_page_config(
-    page_title="Youtube Video Analyzer",
+    page_title="Youtube Video Analyzer", 
     layout="centered"
 )
 
 st.title("🎥 AI Youtube Video Analyzer")
 
-def extract_video_id(url):
-    pattern = r'(?:https?://)?(?:www\.)?(?:youtube\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/\s]{11})'
-    match = re.search(pattern, url)
-    return match.group(1) if match else None
-
-@st.cache_resource
-def get_agent():
-    return build_youtube_agent()
-
-agent = get_agent()
+def get_transcript(video_id):
+    # Safe multi-language extraction directly through python backend
+    transcript_list = YouTubeTranscriptApi.get_transcript(video_id, languages=['en', 'ar'])
+    return " ".join([f"[{item['start']}] {item['text']}" for item in transcript_list])
 
 video_url = st.text_input("Enter Youtube Video Link") 
 button = st.button("Analyze Video") 
 
 if video_url and button:
-    video_id = extract_video_id(video_url)
+    # Safe regex mapping to capture standard and short youtube URLs
+    video_id_match = re.search(r'(?:v=|\/|youtu\.be\/)([0-9A-Za-z_-]{11})', video_url)
     
-    if not video_id:
-        st.error("Invalid YouTube URL format. Please check your link.")
-    else:
-        with st.spinner("Analyzing video transcript details..."):
+    if video_id_match:
+        video_id = video_id_match.group(1)
+        with st.spinner("Fetching and analyzing video details..."):
             try:
-                # 1. Grab the library's official tools
-                yt_tools = YouTubeTools()
+                # Direct background execution bypassing faulty model loops
+                transcript_text = get_transcript(video_id)
                 
-                # 2. Call the exact method from the Agno package signature
-                video_data = yt_tools.get_youtube_video_captions(url=video_url)
-                
-                # 3. Deliver text blocks straight into the prompt layer
-                prompt_payload = (
-                    f"Perform a complete analysis report on this video content. "
-                    f"Video Metadata and Context: {video_data}"
-                )
-                
+                agent = build_youtube_agent()
+                prompt_payload = f"Analyze this video transcript text: {transcript_text}"
                 response = agent.run(prompt_payload)
+                
                 st.markdown("### Analysis Report of Video:")
                 st.markdown(response.content)
             except Exception as e:
-                st.error(f"Analysis processing error: {str(e)}")
+                st.error(f"Could not extract transcript or run analysis: {str(e)}")
+    else:
+        st.error("Invalid YouTube URL format. Please check your link.")
