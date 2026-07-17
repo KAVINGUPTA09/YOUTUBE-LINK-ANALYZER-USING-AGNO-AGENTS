@@ -8,12 +8,11 @@ st.title("🎥 AI Youtube Video Analyzer")
 
 def get_transcript(video_id):
     try:
-        # Bypassing the broken Class reference entirely 
-        # Calling the standalone direct execution function from the core module
-        transcript_list = youtube_transcript_api.get_transcript(video_id, languages=['en', 'ar'])
+        # Pull functional data array using clean explicit package context references
+        transcript_list = youtube_transcript_api.YouTubeTranscriptApi.get_transcript(video_id, languages=['en', 'ar'])
         return " ".join([f"[{item['start']}] {item['text']}" for item in transcript_list])
     except Exception as e:
-        raise Exception(f"Direct backend operational stream failed: {str(e)}")
+        raise Exception(f"Direct stream breakdown: {str(e)}")
 
 video_url = st.text_input("Enter Youtube Video Link") 
 button = st.button("Analyze Video") 
