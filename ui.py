@@ -1,7 +1,6 @@
 import streamlit as st
 import re
-from youtube_transcript_api import YouTubeTranscriptApi
-from youtube_transcript_api._errors import NoTranscriptFound, TranscriptsDisabled
+import youtube_transcript_api # Import module cleanly to fix the attribute error
 from yt import build_youtube_agent
 
 st.set_page_config(
@@ -36,13 +35,12 @@ if video_url and button:
             
             transcript_context = ""
             try:
-                # Double-check this exact syntax: YouTubeTranscriptApi (PascalCase) . get_transcript (snake_case)
-                transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
+                # FIXED PATH: Accessing the class explicitly through the imported module path
+                transcript_list = youtube_transcript_api.YouTubeTranscriptApi.get_transcript(video_id)
                 transcript_context = " ".join([item['text'] for item in transcript_list])
-            except (NoTranscriptFound, TranscriptsDisabled):
-                transcript_context = "[System Alert: This video contains no spoken commentary or captions. It appears to be an audio/visual presentation or montage.]"
             except Exception as e:
-                transcript_context = f"[System Alert: Script ingestion paused by target platform restrictions: {str(e)}]"
+                # Catching any missing transcript or structural exception safely
+                transcript_context = f"[System Alert: This video might not have spoken captions, or processing was paused: {str(e)}]"
             
             prompt_payload = f"""
             Please generate a comprehensive review for this asset:
@@ -53,5 +51,3 @@ if video_url and button:
             st.markdown("### Analysis Report of Video:")
             response = agent.run(prompt_payload)
             st.markdown(response.content)
-
-        
