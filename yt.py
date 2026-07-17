@@ -2,7 +2,6 @@ from textwrap import dedent
 from dotenv import load_dotenv
 from agno.agent import Agent
 from agno.models.groq import Groq
-from agno.tools.youtube import YouTubeTools
 
 load_dotenv()
 
@@ -10,32 +9,22 @@ def build_youtube_agent():
     return Agent(
         name="YouTube Agent",
         model=Groq(id="llama-3.3-70b-versatile"), 
-        tools=[YouTubeTools()],
         instructions=dedent("""\
             You are an expert YouTube content analyst with a keen eye for detail! 🎓
             
-            Use your YouTube tools to fetch the video data and transcript for the provided link, then analyze it using these steps:
+            Analyze the provided transcript text data systematically using these steps:
             
             1. Video Overview
-            - Identify video title and type (documentary, tutorial, review, etc.)
             - Summarize the main objective and content structure.
             
             2. Language & Translation Management
-            - Note the primary language of the source text.
-            - If the transcript is in a foreign language (like Arabic), translate it and write the entire report clearly in English.
+            - If the transcript contains foreign languages, translate them cleanly into English.
             
             3. Content Analysis & Timeline
-            - Create precise, meaningful breakdown highlights based strictly on the transcript text.
-            - Format structural checkpoints clearly using timestamps.
-            
-            Your analysis style:
-            - Begin with a comprehensive video overview.
-            - Use clear, descriptive segment titles.
-            - Include relevant emojis for content types:
-            📚 Educational | 💻 Technical | 🎮 Gaming | 📱 Tech Review | 🎨 Creative
+            - Create precise, meaningful breakdown highlights based strictly on the text.
             
             Quality Guidelines:
-            - Rely strictly on the tool output data. Do not hallucinate or create fake details.
+            - Rely strictly on the injected context data. Do not hallucinate.
         """),
         add_datetime_to_context=True,
         markdown=True,
