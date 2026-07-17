@@ -1,7 +1,7 @@
 import streamlit as st
 import re
-import youtube_transcript_api 
-from yt import build_youtube_agent  # FIXED: Importing directly from yt.py now
+from youtube_transcript_api import YouTubeTranscriptApi
+from yt import build_youtube_agent
 
 st.set_page_config(
     page_title="Youtube Video Analyzer",
@@ -35,10 +35,14 @@ if video_url and button:
             
             transcript_context = ""
             try:
-                # Explicitly pulling using the library path to prevent any attribute errors
-                transcript_list = youtube_transcript_api.YouTubeTranscriptApi.get_transcript(video_id)
-                # Formats text with its native position so the LLM knows time durations
-                transcript_context = " ".join([f"[{item['start']}] {item['text']}" for item in transcript_list])
+                # ALTERNATIVE METHOD: Using list_transcripts() to extract standard data securely
+                transcript_obj = YouTubeTranscriptApi.list_transcripts(video_id)
+                # Automatically fetches the primary available transcript text block
+                active_transcript = transcript_obj.find_transcript(['ar', 'en'])
+                transcript_data = active_transcript.fetch()
+                
+                # Format text with its duration positioning markers
+                transcript_context = " ".join([f"[{item['start']}] {item['text']}" for item in transcript_data])
             except Exception as e:
                 transcript_context = f"[System Alert: Captions unavailable or non-verbal presentation: {str(e)}]"
             
