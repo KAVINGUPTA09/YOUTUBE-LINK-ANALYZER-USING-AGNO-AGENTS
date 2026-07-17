@@ -1,6 +1,6 @@
 import streamlit as st
 import re
-from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api._api import YouTubeTranscriptApi  # Direct internal core module mapping
 from yt import build_youtube_agent
 
 st.set_page_config(
@@ -11,7 +11,7 @@ st.set_page_config(
 st.title("🎥 AI Youtube Video Analyzer")
 
 def get_transcript(video_id):
-    # Using the exact library function call explicitly
+    # Direct explicit execution directly from class wrapper function logic
     transcript_list = YouTubeTranscriptApi.get_transcript(video_id, languages=['en', 'ar'])
     return " ".join([f"[{item['start']}] {item['text']}" for item in transcript_list])
 
