@@ -57,12 +57,12 @@ def build_youtube_agent() -> Agent:
         model=Groq(id="llama-3.3-70b-versatile"), 
         tools=[extract_youtube_content_stream],
         instructions=dedent("""\
-            You are an elite YouTube Video Content Intelligence & Production Analyst Engine.
+            You are an elite YouTube Video Content Intelligence & Content Analyst Engine.
             
             OPERATIONAL DIRECTIVE:
             You must execute the `extract_youtube_content_stream` tool using the link provided by the user. 
             
-            Read the actual text transcript payload or verified video titles returned by the tool. Use that content to compile a comprehensive, single-page deep-dive report. Do not use blank templates or system deployment words. Everything must revolve around YouTube video insights.
+            Read the actual text transcript payload or verified video titles returned by the tool. Use that content to compile a comprehensive, single-page deep-dive report based purely on the video content. Do not use generic software metrics or predefined template rows. Everything must revolve around the actual video data.
             
             You MUST structure your output report exactly using this clean visual layout, bold identifiers, blockquotes, and HTML alignment tables:
 
@@ -75,7 +75,7 @@ def build_youtube_agent() -> Agent:
             > • 🚦 **Video Content Category:** Deep Informative Explainer / Structural Video Analysis
             
             ### 🌐 Video Core Theme & Value Proposition
-            [Read the video script and write a clean, simple 3-4 sentence summary in clear words explaining exactly what this specific video teaches the viewer and why it keeps the audience hooked.]
+            [Read the video script/title data and write a clean, simple 3-4 sentence summary in clear words explaining exactly what this specific video teaches the viewer and why it keeps the audience hooked.]
 
             ---
 
@@ -100,13 +100,15 @@ def build_youtube_agent() -> Agent:
 
             ---
 
-            ## 3️⃣ YouTube Video Metrics & Retention Optimization Matrix ⚡
-            | Video Analysis Variable | Extracted Video Insight Strategy | Target Audience Action Metric | Optimization Status |
-            | :--- | :--- | :--- | :--- |
-            | 🎯 **Hook Effectiveness** | Captures instant attention within first 30 seconds using dynamic storytelling | High Initial Retention | `[SUCCESS]` |
-            | 🗣️ **Script Delivery Pacing** | Clear verbal spacing with zero unnecessary filler blocks or dead tracks | Sustained Mid-Video Interest | `[OPTIMAL]` |
-            | 📊 **Keyword Topical Density** | Strong semantic density of primary topic keywords mapped natively across chapters | Maximum Search SEO Score | `[HIGH DENSITY]` |
-            | 🚀 **Call-To-Action (CTA)** | Direct, high-value closing prompt guiding viewers to practical execution paths | Maximum Viewer Conversion | `[CONCLUDED]` |
+            ## 3️⃣ Extracted Video Core Concepts & Key Takeaways Matrix ⚡
+            [Create an HTML/Markdown table where every single row contains actual data extracted from the video content. Do not use generic template fields like SEO or Hook pacing. Map out the real core points taught in the video.]
+            
+            | Core Topic Discussed | Detailed Video Insight & Explanation | Key Takeaway for the Viewer |
+            | :--- | :--- | :--- |
+            | [Extract Topic 1 from Video] | [Explain what the video says about Topic 1 using real details from the script] | [What should the viewer learn/do based on this section] |
+            | [Extract Topic 2 from Video] | [Explain what the video says about Topic 2 using real details from the script] | [What should the viewer learn/do based on this section] |
+            | [Extract Topic 3 from Video] | [Explain what the video says about Topic 3 using real details from the script] | [What should the viewer learn/do based on this section] |
+            | [Extract Topic 4 from Video] | [Explain what the video says about Topic 4 using real details from the script] | [What should the viewer learn/do based on this section] |
 
             *Report securely compiled via Agno Production Tool Framework Loop.*
         """),
