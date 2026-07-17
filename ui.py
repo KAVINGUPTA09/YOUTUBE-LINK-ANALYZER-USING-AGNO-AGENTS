@@ -1,6 +1,7 @@
 import streamlit as st
 import re
-import youtube_transcript_api
+import urllib.request
+import xml.etree.ElementTree as ET
 from yt import build_youtube_agent
 
 st.set_page_config(page_title="Youtube Video Analyzer", layout="centered")
@@ -8,11 +9,36 @@ st.title("🎥 AI Youtube Video Analyzer")
 
 def get_transcript(video_id):
     try:
-        # Pull functional data array using clean explicit package context references
-        transcript_list = youtube_transcript_api.YouTubeTranscriptApi.get_transcript(video_id, languages=['en', 'ar'])
-        return " ".join([f"[{item['start']}] {item['text']}" for item in transcript_list])
+        # Bypassing completely all blockable transcript libraries
+        # Directly requesting YouTube's public raw timedtext track API
+        api_url = f"https://www.youtube.com/api/timedtext?v={video_id}&lang=en"
+        
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+        req = urllib.request.Request(api_url, headers=headers)
+        
+        with urllib.request.urlopen(req) as response:
+            xml_data = response.read().decode('utf-8')
+            
+        if not xml_data.strip():
+            raise Exception("No transcript data returned from YouTube API.")
+            
+        root = ET.fromstring(xml_data)
+        transcript_lines = []
+        
+        for text_node in root.findall('text'):
+            start = text_node.get('start', '0')
+            text = text_node.text or ""
+            # Cleaning up raw HTML entities like &#39;
+            text = text.replace('&#39;', "'").replace('&quot;', '"')
+            transcript_lines.append(f"[{start}] {text}")
+            
+        if not transcript_lines:
+            raise Exception("Transcript track tracks are empty for this server node.")
+            
+        return " ".join(transcript_lines)
+        
     except Exception as e:
-        raise Exception(f"Direct stream breakdown: {str(e)}")
+        raise Exception(f"Direct XML engine bypass stream failed: {str(e)}")
 
 video_url = st.text_input("Enter Youtube Video Link") 
 button = st.button("Analyze Video") 
