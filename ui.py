@@ -1,6 +1,5 @@
 import streamlit as st
 import re
-from youtube_transcript_api import YouTubeTranscriptApi
 from yt import build_youtube_agent
 
 st.set_page_config(
@@ -31,23 +30,13 @@ if video_url and button:
         st.error("Invalid YouTube URL format. Please check your link.")
     else:
         with st.spinner("Analyzing video transcript details..."):
+            # The agent will now use its built-in tools to fetch the video data directly 
+            # instead of running manual python scraping code.
+            prompt_payload = f"Analyze this video link: {video_url}."
             
-            transcript_context = ""
             try:
-                # Direct module function call passing explicit fallback languages
-                transcript_list = YouTubeTranscriptApi.get_transcript(
-                    video_id, 
-                    languages=['ar', 'en']
-                )
-                transcript_context = " ".join([f"[{item['start']}] {item['text']}" for item in transcript_list])
-            except Exception as e:
-                transcript_context = f"ERROR_FETCHING: {str(e)}"
-            
-            if "ERROR_FETCHING:" in transcript_context:
-                st.error(f"Failed to extract transcript from YouTube: {transcript_context}")
-            else:
-                prompt_payload = f"Analyze this video link: {video_url}. Context transcript data: {transcript_context}"
                 response = agent.run(prompt_payload)
-                
                 st.markdown("### Analysis Report of Video:")
                 st.markdown(response.content)
+            except Exception as e:
+                st.error(f"Analysis processing error: {str(e)}")
