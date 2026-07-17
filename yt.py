@@ -58,23 +58,61 @@ def build_youtube_agent() -> Agent:
             You must execute the tool `extract_youtube_content_stream` with the provided link.
             
             Synthesize an extensive, highly granular dashboard analysis brief based on the tool data.
+            Use simple, direct corporate words that are easy to read. 
+            
+            CRITICAL FORMATTING RULE: 
+            Avoid huge, heavy blocks of text. Make the layout highly visual, attractive, and eye-catching by using bold labels, icons/emojis, short broken bullet lines, and clear section separators.
+            
             You must format your response explicitly using these EXACT headers below so the frontend can parse the tabs correctly:
 
             ### 🎯 Video Blueprint & Enterprise Target Objective
-            - **Core Theme & Value Proposition:** Deep, comprehensive breakdown of the core problem domain and its industrial/environmental significance.
-            - **Algorithmic & Technical Dimensions:** Analysis of systemic roadblocks or structural methodologies addressed.
-            - **Creative & Engagement Matrix:** Breakdown of communication structures and messaging frameworks used to capture focus.
+            
+            🔹 **CORE DOMAIN FOCUS**
+            • **Main Topic:** [Write clean, bold, simple summary line]
+            • **Industry Significance:** [Short bullet point mapping trends]
+            • **Target Market Impact:** [One-line impact highlight]
+            
+            🔹 **TECHNICAL & ARCHITECTURAL DIMENSIONS**
+            • **Core Framework:** [Simple technical logic breakdown]
+            • **Engineering Problem:** [Identify the main roadblock discussed]
+            • **System Delivery:** [Data points or tech layers utilized]
+            
+            🔹 **CREATIVE & ENGAGEMENT MATRIX**
+            • **Audience Psychology:** [How it grabs viewer attention]
+            • **Storytelling Hook:** [The primary communication style used]
+            • **Retention Strategy:** [Visual pacing or structure notes]
 
             ### 🗺️ Detailed Conceptual Roadmap
-            1. **Phase 1: Fundamental Grounding:** In-depth evaluation of definitions, foundational metrics, and background realities.
-            2. **Phase 2: Complex Ecosystem Dependencies:** Granular breakdown of biological, industrial, or technical micro-connections and feedback loops.
-            3. **Phase 3: Risk Profiles & Failure Modes:** Deep analysis of modern threats, degradation factors, and secondary negative externalities.
-            4. **Phase 4: Global Framework Governance:** Concrete evaluation of systematic recovery models, international policy compliance, and management frameworks.
+            
+            📍 **PHASE 1: FOUNDATIONAL LAYER**
+            • **Baseline Concept:** [Explain the absolute basics in simple words]
+            • **Core Definitions:** [What everyone needs to know first]
+            
+            📍 **PHASE 2: ECOSYSTEM DEPENDENCIES**
+            • **Micro-Connections:** [How different parts connect together]
+            • **System Feedback Loops:** [Hidden dependencies mapped clearly]
+            
+            📍 **PHASE 3: RISK & CHALLENGE PROFILES**
+            • **Primary Threats:** [What major risks are highlighted]
+            • **Secondary Externalities:** [The long-term danger or problems]
+            
+            📍 **PHASE 4: FUTURE STATE GOVERNANCE**
+            • **Global Standards:** [How the world or industry handles this]
+            • **Compliance Models:** [Actionable regulatory or system frameworks]
 
             ### ⚡ Actionable Enterprise Checklist
-            - **Strategic Pre-Requisites:** Exact data metrics, auditing standards, and operational parameters required before action.
-            - **Operational Guardrails:** Deployment parameters, mitigation systems, and risk avoidance controls to establish.
-            - **Optimization & Scale Metrics:** Protocols for long-term tracking, ecosystem compliance, and community scale-up metrics.
+            
+            🚀 **STRATEGIC PRE-REQUISITES**
+            ☐ **Metric Audit:** Establish baseline analytics variables before deployment.
+            ☐ **Prerequisite Scan:** Verify technical readiness and environment checks.
+            
+            ⚙️ **OPERATIONAL GUARDRAILS**
+            ☐ **Risk Avoidance:** Set strict containment boundaries for mitigation.
+            ☐ **Architecture Setup:** Deploy sustainable blueprint controls instantly.
+            
+            📈 **SCALE & OPTIMIZATION PIPELINES**
+            ☐ **Continuous Track:** Monitor long-term compliance metrics regularly.
+            ☐ **Community Scaling:** Expand ecosystem reach using structural scaling data.
 
             *Report securely compiled via Agno Production Tool Framework Loop.*
         """),
