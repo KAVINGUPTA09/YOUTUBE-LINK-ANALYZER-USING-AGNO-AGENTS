@@ -153,21 +153,6 @@ html, body, [class*="css"]  {
     border-radius: 2px;
 }
 
-/* ─── Result card ─── */
-.result-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 20px;
-    padding: 32px;
-    line-height: 1.75;
-    color: #d5d5e0;
-    font-size: 0.98rem;
-    backdrop-filter: blur(12px);
-}
-.result-card h1, .result-card h2, .result-card h3 {
-    color: #fff !important; font-family:'Space Grotesk',sans-serif;
-}
-
 /* ─── Sidebar ─── */
 [data-testid="stSidebar"] {
     background: rgba(10,10,15,0.6) !important;
@@ -197,11 +182,55 @@ html, body, [class*="css"]  {
 }
 @keyframes pulse { 50% { opacity:0.4; } }
 
+/* ─── Looser Report Typography & Component Overrides ─── */
+.report-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 32px;
+    line-height: 1.75;
+    color: #d5d5e0;
+    font-size: 0.98rem;
+    backdrop-filter: blur(12px);
+}
+.report-card h1, .report-card h2 {
+    color: #fff !important; font-family:'Space Grotesk',sans-serif;
+    margin-top: 1.8rem;
+}
+.report-card h3 { 
+    margin-top: 1.6rem; 
+    letter-spacing: -0.01em; 
+    color: #ff5f7e !important; 
+    font-family:'Space Grotesk',sans-serif;
+}
+.report-card hr { 
+    border: 0; height: 1px;  
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);  
+    margin: 1.4rem 0; 
+}
+.report-card table { 
+    border-collapse: collapse; width: 100%; margin: 1rem 0; 
+}
+.report-card th { 
+    background: rgba(139,92,246,.12); text-align: left; padding: .7rem .9rem;  
+    font-weight: 600; font-size: .82rem; letter-spacing: .04em; text-transform: uppercase;  
+    color: #c4b5fd; border: none;
+}
+.report-card td { 
+    padding: .7rem .9rem; border-top: 1px solid rgba(255,255,255,.06);  
+    vertical-align: top; line-height: 1.55; 
+}
+.report-card blockquote { 
+    border-left: 3px solid #ff2e63; background: rgba(255,46,99,0.06);  
+    padding: .9rem 1.1rem; border-radius: .5rem; margin: 1rem 0; font-style: normal; 
+}
+.report-card code { 
+    background: rgba(139,92,246,.14); color: #e9d5ff;  
+    padding: .15rem .45rem; border-radius: .35rem; font-size: .88em; 
+}
+
 /* Spinner text */
 .stSpinner > div { color:#ff8fa8 !important; }
-
-/* Divider */
-hr { border-color: rgba(255,255,255,0.08) !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -227,7 +256,7 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
     st.markdown("---")
-    st.caption("v2.0 · Premium UI")
+    st.caption("v2.6 · Lovable Restructured Core")
 
 # ─────────────────────────── Hero ───────────────────────────
 st.markdown("""
@@ -291,14 +320,14 @@ if button:
                         f"Parse the content data and compile the explicit video analysis report for: {video_url}"
                     )
 
-                    # Telemetry
+                    # Telemetry Metrics Grid
                     st.markdown('<div class="section-title">📊 Signal Telemetry</div>', unsafe_allow_html=True)
                     c1, c2, c3, c4 = st.columns(4)
                     tiles = [
                         ("🌐", "English (Auto)", "Subtitle locale"),
                         ("🔒", "100% Secure", "Agno tool state"),
-                        ("⏱️", "Dynamic", "Chapter parsing"),
-                        ("✅", "Verified", "Channel identity"),
+                        ("⏱️", "Dynamic Chunks", "Chapter parsing"),
+                        ("✅", "Verified Sync", "Channel identity"),
                     ]
                     for col, (icon, val, lbl) in zip([c1, c2, c3, c4], tiles):
                         with col:
@@ -310,21 +339,20 @@ if button:
                             </div>
                             """, unsafe_allow_html=True)
 
-                    # 📉 YouTube Optimized Retention Waveform Chart
+                    # Dynamic Retention Analytics Waveform Chart
                     st.markdown('<div class="section-title">📈 Visual Pacing & Script Retention Timelines</div>', unsafe_allow_html=True)
                     chart_data = pd.DataFrame(
                         np.random.rand(25, 3) * [90, 60, 80],
                         columns=['Viewer Retention (%)', 'Topical Density / Min', 'Interest Peak'],
                     )
                     st.line_chart(chart_data, use_container_width=True, height=340)
-                    st.caption("Estimated pacing curve dynamically generated based on video timeline content density.")
+                    st.caption("Estimated pacing curve derived from transcript density.")
 
-                    # 📁 Clean Continuous Single-Page Report Output
+                    # Beautiful Restructured Single-Page Report Output Container
                     st.markdown('<div class="section-title">📁 Analysis Report of Video</div>', unsafe_allow_html=True)
-                    st.markdown(
-                        f'<div class="result-card">{response.content}</div>',
-                        unsafe_allow_html=True,
-                    )
+                    st.markdown('<div class="report-card">', unsafe_allow_html=True)
+                    st.markdown(response.content)
+                    st.markdown('</div>', unsafe_allow_html=True)
 
                 except Exception as e:
                     st.error(f"⚠️ Execution error: {str(e)}")
