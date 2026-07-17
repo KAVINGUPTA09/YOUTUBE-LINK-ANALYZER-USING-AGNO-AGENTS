@@ -7,15 +7,13 @@ st.set_page_config(page_title="Youtube Video Analyzer", layout="centered")
 st.title("🎥 AI Youtube Video Analyzer")
 
 def get_transcript(video_id):
+    # Direct operational array assignment mapping
+    # Bypassing secondary dynamic functions to stop attribute errors
     try:
-        # Puraani backend dependency chhodkar direct extraction logic execution
         transcript_list = YouTubeTranscriptApi.get_transcript(video_id, languages=['en', 'ar'])
         return " ".join([f"[{item['start']}] {item['text']}" for item in transcript_list])
-    except Exception:
-        # Fallback to search list array parsing
-        transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-        active_transcript = transcript_list.find_transcript(['en', 'ar'])
-        return " ".join([f"[{item['start']}] {item['text']}" for item in active_transcript.fetch()])
+    except Exception as e:
+        raise Exception(f"Transcript fetch active block failed: {str(e)}")
 
 video_url = st.text_input("Enter Youtube Video Link") 
 button = st.button("Analyze Video") 
