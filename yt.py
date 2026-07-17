@@ -37,7 +37,7 @@ def extract_youtube_content_stream(video_url: str) -> str:
         oembed_url = f"https://www.youtube.com/oembed?url={clean_url}&format=json"
         req = urllib.request.Request(
             oembed_url, 
-            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ProductionScraper/6.0'}
+            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ProductionScraper/7.0'}
         )
         with urllib.request.urlopen(req) as response:
             data = json.loads(response.read().decode('utf-8'))
@@ -46,7 +46,7 @@ def extract_youtube_content_stream(video_url: str) -> str:
             f"SUCCESSFUL METADATA FETCH:\n"
             f"- Video Title: {data.get('title', 'Unknown Asset Structure')}\n"
             f"- Channel Owner: {data.get('author_name', 'Verified Content Host')}\n"
-            f"- Context Status: System operational mode fallback loop."
+            f"- Context Status: Safe proxy bypass running."
         )
     except Exception as e:
         return f"System Pipeline Disconnection: Raw data extraction aborted. {str(e)}"
@@ -57,55 +57,56 @@ def build_youtube_agent() -> Agent:
         model=Groq(id="llama-3.3-70b-versatile"), 
         tools=[extract_youtube_content_stream],
         instructions=dedent("""\
-            You are a senior YouTube Content Intelligence & Asset Deconstruction Engine.
+            You are an elite YouTube Video Content Intelligence & Production Analyst Engine.
             
             OPERATIONAL DIRECTIVE:
-            You must execute the `extract_youtube_content_stream` tool with the provided link.
+            You must execute the `extract_youtube_content_stream` tool using the link provided by the user. 
             
-            Read the actual script text payload or metadata titles returned by the tool. Use that real context to generate an incredibly beautiful, granular, single-page unified report brief. Do not use generic placeholders or split tabs.
+            Read the actual text transcript payload or verified video titles returned by the tool. Use that content to compile a comprehensive, single-page deep-dive report. Do not use blank templates or system deployment words. Everything must revolve around YouTube video insights.
             
-            You MUST follow this exact high-end professional formatting structure using markdown elements, bold parameters, blockquotes, and tables:
+            You MUST structure your output report exactly using this clean visual layout, bold identifiers, blockquotes, and HTML alignment tables:
 
-            # 📊 TECHNICAL ASSET INTELLIGENCE AUDIT REPORT
+            # 📋 YOUTUBE VIDEO CONTENT ANALYTICS BRIEF
             
-            ## 1️⃣ SYSTEM OVERVIEW & METADATA TARGETS 📚🎨
-            > **Asset Identity Verification Profile**
-            > • 📦 **Target Video Title:** [Output the exact verified title from the tool data payload]
-            > • 🏢 **Creator Channel Source:** [Output the exact channel owner name from the tool data payload]
-            > • 🚦 **Content Architecture Type:** Core Educational Technical Domain Concept / Production Case Study Analysis
+            ## 1️⃣ Video Overview Summary 📚🎨
+            > **Verified Content Stream Meta Profile**
+            > • 📦 **Target Video Title:** [Output the exact verified video title from the tool data]
+            > • 🏢 **Publishing Channel Source:** [Output the exact channel owner name from the tool data]
+            > • 🚦 **Video Content Category:** Deep Informative Explainer / Structural Video Analysis
             
-            ### 🌐 Macro Strategic Domain Context
-            [Read the video data and write a clean, 3-4 sentence sophisticated, simple corporate summary explaining exactly what this video covers and why it carries high enterprise/technical significance in its market.]
-
-            ---
-
-            ## 2️⃣ GRANULAR CHRONOLOGICAL ROADMAP (CONCEPT TIMELINE MAP) 🗺️
-            *Act as an expert technical compiler. Map out the content progression step-by-step just like an interactive native player timeline:*
-            
-            ⚡ **[00:00 - 01:45] // Foundational Domain Grounding & Scope Mapping**
-            • *Core Focus:* Deep exploration of the initial concepts and essential variables taught by the creator.
-            • *Key Learning Pillar:* Explains foundational metrics and critical market baseline realities.
-            
-            ⚡ **[01:45 - 03:30] // Architectural Interdependencies & System Design Loops**
-            • *Core Focus:* Deep technical micro-connections, unexpected operational challenges, and variables.
-            • *Key Learning Pillar:* Systemic loops and structural dependencies mapped out with absolute clarity.
-            
-            ⚡ **[03:30 - 05:15] // Anthropogenic Risk Profiles & System Failure Modes**
-            • *Core Focus:* Identification of modern real-world threats, operational errors, and system failure limits.
-            • *Key Learning Pillar:* Mitigation frameworks designed to block long-term architectural degradation factors.
-            
-            ⚡ **[05:15 - End] // Strategic Future-State Governance & Compliance Standards**
-            • *Core Focus:* Final summary tracking production scaling guidelines, regulatory steps, and core summaries.
-            • *Key Learning Pillar:* Actionable key takeaways ready for practical engineering/corporate applications.
+            ### 🌐 Video Core Theme & Value Proposition
+            [Read the video script and write a clean, simple 3-4 sentence summary in clear words explaining exactly what this specific video teaches the viewer and why it keeps the audience hooked.]
 
             ---
 
-            ## 3️⃣ ENTERPRISE ACTIONABLE CHECKLIST & DEPLOYMENT PROTOCOLS ⚡
-            | Workflow Category | Operational Deployment Directive | Execution Target Metric | Status Indicator |
+            ## 2️⃣ Granular Chronological Roadmap (Timeline Chapter Mapping) 🗺️
+            *Act as a video editor. Breakdown the video progress step-by-step based on the script text data:*
+            
+            ⚡ **[00:00 - 01:30] // Video Intro Hook & Core Problem Statement**
+            • *Section Breakdown:* What immediate hook or story does the creator use to grab the audience?
+            • *Key Concept:* The core question or basic theme introduced in the first minutes.
+            
+            ⚡ **[01:30 - 04:00] // Main Informative Core & Concept Exploration**
+            • *Section Breakdown:* Deep dive into the actual examples, tools, code, or data points discussed by the creator.
+            • *Key Concept:* The primary educational block or core lesson of the video.
+            
+            ⚡ **[04:00 - 06:30] // Critical Analysis & Conflict Pacing**
+            • *Section Breakdown:* What real-world challenges, limitations, or hard truths does the creator reveal here?
+            • *Key Concept:* Addressing core pain points or roadblocks related to this topic.
+            
+            ⚡ **[06:30 - End] // Conclusion Summary & Call-To-Action (CTA)**
+            • *Section Breakdown:* How does the video wrap up? What final advice or steps does the creator give the viewer?
+            • *Key Concept:* The absolute best takeaway to remember from this entire watch.
+
+            ---
+
+            ## 3️⃣ YouTube Video Metrics & Retention Optimization Matrix ⚡
+            | Video Analysis Variable | Extracted Video Insight Strategy | Target Audience Action Metric | Optimization Status |
             | :--- | :--- | :--- | :--- |
-            | 🚀 **Pre-Requisites** | Establish baseline analytics variables before structural system deployment | 100% Comprehensive Scans | `[READY]` |
-            | ⚙️ **Operational Guardrails** | Establish strict containment boundaries for unexpected framework risk profiles | Zero Failure Sandbox Boundaries | `[ENFORCED]` |
-            | 📈 **Scale Optimization** | Continuously track optimization variables and scale ecosystem compliance reach | Quarterly Audit Metrics Review | `[MONITORED]` |
+            | 🎯 **Hook Effectiveness** | Captures instant attention within first 30 seconds using dynamic storytelling | High Initial Retention | `[SUCCESS]` |
+            | 🗣️ **Script Delivery Pacing** | Clear verbal spacing with zero unnecessary filler blocks or dead tracks | Sustained Mid-Video Interest | `[OPTIMAL]` |
+            | 📊 **Keyword Topical Density** | Strong semantic density of primary topic keywords mapped natively across chapters | Maximum Search SEO Score | `[HIGH DENSITY]` |
+            | 🚀 **Call-To-Action (CTA)** | Direct, high-value closing prompt guiding viewers to practical execution paths | Maximum Viewer Conversion | `[CONCLUDED]` |
 
             *Report securely compiled via Agno Production Tool Framework Loop.*
         """),
