@@ -1,6 +1,7 @@
 import streamlit as st
 import re
 from yt import build_youtube_agent
+from agno.tools.youtube import YouTubeTools
 
 st.set_page_config(
     page_title="Youtube Video Analyzer",
@@ -30,11 +31,18 @@ if video_url and button:
         st.error("Invalid YouTube URL format. Please check your link.")
     else:
         with st.spinner("Analyzing video transcript details..."):
-            # The agent will now use its built-in tools to fetch the video data directly 
-            # instead of running manual python scraping code.
-            prompt_payload = f"Analyze this video link: {video_url}."
-            
             try:
+                # GUARANTEED BACKEND FETCH: 
+                # We use the native YouTubeTools directly in python to grab the data first
+                yt_tools = YouTubeTools()
+                video_data = yt_tools.get_video_information(url=video_url)
+                
+                # We feed the direct text results straight into the agent prompt so it CANNOT fail
+                prompt_payload = (
+                    f"Perform a complete analysis report on this video content. "
+                    f"Video Metadata and Context: {video_data}"
+                )
+                
                 response = agent.run(prompt_payload)
                 st.markdown("### Analysis Report of Video:")
                 st.markdown(response.content)
