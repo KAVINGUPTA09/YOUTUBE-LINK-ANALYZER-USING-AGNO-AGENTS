@@ -35,9 +35,11 @@ if video_url and button:
             
             transcript_context = ""
             try:
-                # ALTERNATIVE METHOD: Using list_transcripts() to extract standard data securely
-                transcript_obj = YouTubeTranscriptApi.list_transcripts(video_id)
-                # Automatically fetches the primary available transcript text block
+                # FIX: We instantiate an instance of the class first to call list_transcripts cleanly
+                api_instance = YouTubeTranscriptApi()
+                transcript_obj = api_instance.list_transcripts(video_id)
+                
+                # Automatically fetches the primary available transcript text block (supports Arabic 'ar' and English 'en')
                 active_transcript = transcript_obj.find_transcript(['ar', 'en'])
                 transcript_data = active_transcript.fetch()
                 
