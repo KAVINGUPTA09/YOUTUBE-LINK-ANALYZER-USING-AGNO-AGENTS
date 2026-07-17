@@ -1,7 +1,7 @@
 import streamlit as st
 import re
-import youtube_transcript_api # Import module cleanly to fix the attribute error
-from yt import build_youtube_agent
+import youtube_transcript_api 
+from yt import build_youtube_agent  # FIXED: Importing directly from yt.py now
 
 st.set_page_config(
     page_title="Youtube Video Analyzer",
@@ -10,7 +10,7 @@ st.set_page_config(
 
 st.title("🎥 AI Youtube Video Analyzer")
 
-# Helper function to extract the 11-character Video ID from any YouTube URL format
+# Helper function to extract the 11-character Video ID safely
 def extract_video_id(url):
     pattern = r'(?:https?://)?(?:www\.)?(?:youtube\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/\s]{11})'
     match = re.search(pattern, url)
@@ -22,32 +22,30 @@ def get_agent():
 
 agent = get_agent()
 
-video_url = st.text_input("Enter Youtube Video Link")
-button = st.button("Analyze Video")
+video_url = st.text_input("Enter Youtube Video Link") 
+button = st.button("Analyze Video") 
 
 if video_url and button:
     video_id = extract_video_id(video_url)
     
     if not video_id:
-        st.error("Invalid YouTube URL format. Please double-check the link.")
+        st.error("Invalid YouTube URL format. Please check your link.")
     else:
-        with st.spinner("Extracting content and running analysis..."):
+        with st.spinner("Analyzing video transcript details..."):
             
             transcript_context = ""
             try:
-                # FIXED PATH: Accessing the class explicitly through the imported module path
+                # Explicitly pulling using the library path to prevent any attribute errors
                 transcript_list = youtube_transcript_api.YouTubeTranscriptApi.get_transcript(video_id)
-                transcript_context = " ".join([item['text'] for item in transcript_list])
+                # Formats text with its native position so the LLM knows time durations
+                transcript_context = " ".join([f"[{item['start']}] {item['text']}" for item in transcript_list])
             except Exception as e:
-                # Catching any missing transcript or structural exception safely
-                transcript_context = f"[System Alert: This video might not have spoken captions, or processing was paused: {str(e)}]"
+                transcript_context = f"[System Alert: Captions unavailable or non-verbal presentation: {str(e)}]"
             
-            prompt_payload = f"""
-            Please generate a comprehensive review for this asset:
-            - Target link: {video_url}
-            - Context content string: {transcript_context}
-            """
+            # Neatly bundle the text down for the agent prompt
+            prompt_payload = f"Analyze this video link: {video_url}. Context transcript data: {transcript_context}"
             
-            st.markdown("### Analysis Report of Video:")
             response = agent.run(prompt_payload)
-            st.markdown(response.content)
+
+        st.markdown("### Analysis Report of Video:")
+        st.markdown(response.content)
