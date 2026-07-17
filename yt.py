@@ -9,8 +9,7 @@ load_dotenv()
 def build_youtube_agent():
     return Agent(
         name="YouTube Agent",
-        model=Groq(id="qwen/qwen3-32b"), 
-        # Agno native YouTube tools ko yahan inject kiya hai
+        model=Groq(id="llama-3.3-70b-versatile"), 
         tools=[YouTubeTools()],
         instructions=dedent("""\
             You are an expert YouTube content analyst with a keen eye for detail! 🎓
@@ -39,6 +38,6 @@ def build_youtube_agent():
             - Rely strictly on the tool output data. Do not hallucinate or create fake details.
         """),
         add_datetime_to_context=True,
-        show_tool_calls=True, # Ye dashboard par tool execution dikhayega
+        show_tool_calls=True,
         markdown=True,
     )
