@@ -21,19 +21,17 @@ def extract_youtube_content_stream(video_url: str) -> str:
     video_id = video_id_match.group(1)
     clean_url = f"https://www.youtube.com/watch?v={video_id}"
     
-    # Execution Layer Stage 1: Native Subtitle Track Parsing
     try:
         srt = YouTubeTranscriptApi.get_transcript(video_id, languages=['en', 'en-US'])
         return f"SUCCESSFUL TRANSCRIPT FETCH:\n" + " ".join([item['text'] for item in srt])
     except Exception:
-        pass  # Cloud server network restriction encountered, falling back to network bypass channel
+        pass
         
-    # Execution Layer Stage 2: Public oEmbed Object Interception
     try:
         oembed_url = f"https://www.youtube.com/oembed?url={clean_url}&format=json"
         req = urllib.request.Request(
             oembed_url, 
-            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) InsightClient/2.0'}
+            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) InsightClient/3.0'}
         )
         with urllib.request.urlopen(req) as response:
             data = json.loads(response.read().decode('utf-8'))
@@ -54,25 +52,31 @@ def build_youtube_agent() -> Agent:
         model=Groq(id="llama-3.3-70b-versatile"), 
         tools=[extract_youtube_content_stream],
         instructions=dedent("""\
-            You are a premier cloud automation engine and content analyst! 🎓
+            You are a senior enterprise content analyst and system orchestrator! 🎓
             
             OPERATIONAL MANDATE:
-            You must run `extract_youtube_content_stream` with the user-provided link to retrieve context.
+            You must execute the tool `extract_youtube_content_stream` with the provided link.
             
-            Using the output payload provided by the tool asset channel, compile a rich, deep dashboard report.
-            
-            Synthesize the layout strictly using these clean markdown visual segments:
-            ### 🎯 Video Blueprint & Target Objective
-            Provide a deep structural statement of the core theme and technical/creative objectives of this material.
-            
+            Synthesize an extensive, highly granular dashboard analysis brief based on the tool data.
+            You must format your response explicitly using these EXACT headers below so the frontend can parse the tabs correctly:
+
+            ### 🎯 Video Blueprint & Enterprise Target Objective
+            - **Core Theme & Value Proposition:** Deep, comprehensive breakdown of the core problem domain and its industrial/environmental significance.
+            - **Algorithmic & Technical Dimensions:** Analysis of systemic roadblocks or structural methodologies addressed.
+            - **Creative & Engagement Matrix:** Breakdown of communication structures and messaging frameworks used to capture focus.
+
             ### 🗺️ Detailed Conceptual Roadmap
-            Create a highly informative step-by-step master learning path or topical framework breakdown detailing every core component related to this concept domain.
-            
+            1. **Phase 1: Fundamental Grounding:** In-depth evaluation of definitions, foundational metrics, and background realities.
+            2. **Phase 2: Complex Ecosystem Dependencies:** Granular breakdown of biological, industrial, or technical micro-connections and feedback loops.
+            3. **Phase 3: Risk Profiles & Failure Modes:** Deep analysis of modern threats, degradation factors, and secondary negative externalities.
+            4. **Phase 4: Global Framework Governance:** Concrete evaluation of systematic recovery models, international policy compliance, and management frameworks.
+
             ### ⚡ Actionable Enterprise Checklist
-            List crisp, production-grade strategic guidelines and major takeaways suitable for practical engineering/workspace applications.
-            
-            Verification Footer Statement:
-            Include a small clean text block at the bottom: "*Report securely compiled via Agno Production Tool Framework Loop.*"
+            - **Strategic Pre-Requisites:** Exact data metrics, auditing standards, and operational parameters required before action.
+            - **Operational Guardrails:** Deployment parameters, mitigation systems, and risk avoidance controls to establish.
+            - **Optimization & Scale Metrics:** Protocols for long-term tracking, ecosystem compliance, and community scale-up metrics.
+
+            *Report securely compiled via Agno Production Tool Framework Loop.*
         """),
         add_datetime_to_context=True,
         markdown=True,
