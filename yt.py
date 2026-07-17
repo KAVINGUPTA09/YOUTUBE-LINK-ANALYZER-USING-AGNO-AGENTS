@@ -38,6 +38,5 @@ def build_youtube_agent():
             - Rely strictly on the tool output data. Do not hallucinate or create fake details.
         """),
         add_datetime_to_context=True,
-        show_tool_calls=True,
         markdown=True,
     )
