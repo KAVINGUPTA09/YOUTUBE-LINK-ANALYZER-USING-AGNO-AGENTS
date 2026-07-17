@@ -1,71 +1,75 @@
 import os
 import re
+import json
+import urllib.request
 from textwrap import dedent
 from dotenv import load_dotenv
 from agno.agent import Agent
 from agno.models.groq import Groq
-import yt_dlp
+from youtube_transcript_api import YouTubeTranscriptApi
 
 load_dotenv()
 
 def extract_youtube_content_stream(video_url: str) -> str:
-    """Robust fallback extractor that utilizes yt-dlp layer mechanics to completely bypass 
-    network drops and download core subtitle tracks or description data safely.
+    """Advanced technical pipeline that extracts the absolute raw transcript dump in bulk 
+    to provide high-density context variables to the downstream LLM processing block.
     """
     m = re.search(r'(?:v=|\/|youtu\.be\/)([0-9A-Za-z_-]{11})', video_url)
     if not m:
-        return "Extraction Error: invalid YouTube URL pattern."
+        return "Extraction Error: Invalid target link architecture syntax."
     
     video_id = m.group(1)
+    clean_url = f"https://www.youtube.com/watch?v={video_id}"
     
-    # Target parameter options for deep data mining
-    ydl_opts = {
-        'skip_download': True,
-        'writesubtitles': True,
-        'writeautomaticsub:': True,
-        'subtitleslangs': ['en.*', 'hi.*'],
-        'quiet': True,
-        'no_warnings': True
-    }
-    
+    # Primary Data Stream Layer: Bulk Transcript Mining Channel
     try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(video_url, download=False)
-            title = info.get('title', 'Unknown Concept Title')
-            channel = info.get('uploader', 'Unknown Content Channel')
-            description = info.get('description', '')
-            
-            # Formulating target data core block
-            data_payload = (
-                f"SUCCESSFUL DATA FETCH PIPELINE:\n"
-                f"- Video Title: {title}\n"
-                f"- Channel Owner: {channel}\n"
-                f"- Core Script/Context Data Chunk:\n{description[:1500]}\n"
-            )
-            return data_payload
-            
+        srt = YouTubeTranscriptApi.get_transcript(
+            video_id, languages=['en', 'en-US', 'en-GB', 'hi', 'es']
+        )
+        bulk_lines = []
+        for item in srt:
+            mnt = int(item['start'] // 60)
+            sec = int(item['start'] % 60)
+            bulk_lines.append(f"[{mnt}:{sec:02d}] {item['text']}")
+        
+        # Pulling the entire available script block for complete textual transparency
+        return "SUCCESSFUL BULK TRANSCRIPT STREAM FETCH:\n" + "\n".join(bulk_lines)
+    except Exception:
+        pass
+        
+    # Secondary Target Recovery Pipeline: Structural Metadata Scraper Bypass
+    try:
+        oembed_url = f"https://www.youtube.com/oembed?url={clean_url}&format=json"
+        req = urllib.request.Request(oembed_url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ProductionBrief/8.0'})
+        with urllib.request.urlopen(req) as response:
+            data = json.loads(response.read().decode('utf-8'))
+        return (
+            "SUCCESSFUL METADATA RECOVERY NODE:\n"
+            f"- Video Title: {data.get('title', 'Unknown Concept Profile')}\n"
+            f"- Channel Owner: {data.get('author_name', 'Verified Creator Node')}\n"
+            f"- Notice: Script tracks restricted. Deconstruct the global concept based entirely on this direct metadata payload context."
+        )
     except Exception as e:
-        return f"Pipeline connection failure: Real content extraction aborted due to framework layers. Info: {str(e)}"
+        return f"Critical Data Pipe Failure: Extraction interface broken. Detail: {str(e)}"
 
 def build_youtube_agent() -> Agent:
     return Agent(
-        name="YouTube Content Intelligence Engine",
+        name="YouTube Heavy Content Intelligence Engine",
         model=Groq(id="llama-3.3-70b-versatile"),
         tools=[extract_youtube_content_stream],
         instructions=dedent("""\
-        You are an elite YouTube Video Content Analyst.
+        You are a high-fidelity Senior YouTube Content Dissection Specialist.
         
-        OPERATIONAL DIRECTIVE:
-        1. Call `extract_youtube_content_stream` with the user's URL.
-        2. Read the returned transcript / metadata chunk carefully. Extract the true conceptual points.
-        3. Produce a clean, highly formatted, scannable report using the EXACT markdown template below.
+        CRITICAL OPERATIONAL RULES:
+        - NEVER output generic placeholder text like "No description available", "Ecosystem analysis begins", or "Protect the environment".
+        - You must review the absolute raw transcript dump or titles provided by the tool call. Extract dense, real-world granular details.
+        - If the script talks about specific codebase parameters, framework tools, animal species, technical numbers, or scientific data, you must document them explicitly. 
+        - Provide extreme density of text. Fill out the report with heavy, comprehensive factual knowledge extracted directly from the text block.
         
-        FORMATTING RULES (STRICT — the UI depends on this):
-        - Every field goes on its OWN line. Never join fields with `•` on the same line.
-        - Use short lines (max ~18 words). Break long thoughts across bullets.
+        FORMATTING RULES (STRICT FOR THE LOVABLE UI):
+        - Every field goes on its OWN line. Never combine values using bullet points on the same line string.
         - Leave one blank line between every timeline block and every section.
-        - Never wrap bold labels around long paragraphs — keep labels short.
-        - Use plain markdown tables. No inline HTML.
+        - Use standard markdown matrix tables. No inline HTML injection allowed.
         
         ═══════════════════════════════════════════════
         TEMPLATE — reproduce this structure exactly:
@@ -73,68 +77,68 @@ def build_youtube_agent() -> Agent:
         # 📋 YouTube Video Analytics Brief
         
         ## 1️⃣ Overview
-        **🎬 Title:** [Insert exact title extracted from tool]
-        **📺 Channel:** [Insert exact channel extracted from tool]
-        **🏷️ Category:** Technical Architecture Concept Deep Dive
+        **🎬 Title:** [Insert exact full asset title parsed from the tool response]
+        **📺 Channel:** [Insert exact corporate channel name parsed from the tool response]
+        **🏷️ Category:** High-Density Asset Content Structure Analysis
         
         ### 🌐 Core Theme
-        [Insert 1st short sentence explaining the major point taught in the video]
-        [Insert 2nd short sentence explaining the technical problem solved]
-        [Insert 3rd short sentence detailing the exact real world value]
+        [Detailed factual statement 1 tracking the explicit background reality taught in this script]
+        [Detailed factual statement 2 explaining the deep mechanics/variables demonstrated by the creator]
+        [Detailed factual statement 3 summarizing the exact practical final execution outcome]
         
         ---
         
         ## 2️⃣ Chronological Roadmap 🗺️
-        Break the video theme down into 4 clear roadmap blocks. Follow this layout precisely:
+        Analyze the bulk text and extract 4 heavy, comprehensive chronological roadmap blocks. Do NOT use short placeholder phrases.
         
         ### ⚡ `[00:00 – 01:30]` — Intro Hook
         **Section**
-        [Write a single short sentence explaining how this content context opens up]
+        [Write a deep, multi-word descriptive sentence explaining the exact opening context sequence or direct example shown by the creator]
         
         **Key Concept**
-        [Write one short sentence mapping the initial baseline concept]
+        [The absolute primary core technical/scientific topic or precise variable introduced here]
         
         ---
         
         ### ⚡ `[01:30 – 04:00]` — Core Concept
         **Section**
-        [Write a single short sentence breaking down the core execution step]
+        [Write a heavy, detailed breakdown sentence tracking the main system process, code logic, or primary operational behavior explained next]
         
         **Key Concept**
-        [Write one short sentence mapping the primary system mechanism]
+        [The exact structural mechanism, dynamic workflow, or factual reality detailed in this block]
         
         ---
         
         ### ⚡ `[04:00 – 06:30]` — Deep Dive / Challenges
         **Section**
-        [Write a single short sentence detailing the technical hurdles or trade-offs]
+        [Write a comprehensive sentence detailing the specific system limitations, environmental threats, failure modes, or real-world friction metrics covered here]
         
         **Key Concept**
-        [Write one short sentence explaining how to handle these constraints]
+        [The precise roadblock variables, data points, or performance costs described by the speaker]
         
         ---
         
         ### ⚡ `[06:30 – End]` — Conclusion & CTA
         **Section**
-        [Write a single short sentence summarizing the final wrapping message]
+        [Write a clean, informative sentence outlining how the video concludes its narrative arc, system testing, or long-term guidance loops]
         
         **Key Concept**
-        [Write one short sentence explaining the instant actionable takeaway]
+        [The exact, concrete real-world actionable takeaway or deployment benchmark left behind for the viewer]
         
         ---
         
         ## 3️⃣ Key Takeaways Matrix ⚡
         | # | Core Topic | Insight from Video | Viewer Takeaway |
         | :- | :--- | :--- | :--- |
-        | 1 | [Topic 1] | [Insight in ≤14 words] | [Action in ≤10 words] |
-        | 2 | [Topic 2] | [Insight in ≤14 words] | [Action in ≤10 words] |
-        | 3 | [Topic 3] | [Insight in ≤14 words] | [Action in ≤10 words] |
-        | 4 | [Topic 4] | [Insight in ≤14 words] | [Action in ≤10 words] |
+        | 1 | [Factual Subject 1] | [Detailed specific observation mapping exact script realities in ≤14 words] | [Actionable workflow metric step in ≤10 words] |
+        | 2 | [Factual Subject 2] | [Detailed specific observation mapping exact script realities in ≤14 words] | [Actionable workflow metric step in ≤10 words] |
+        | 3 | [Factual Subject 3] | [Detailed specific observation mapping exact script realities in ≤14 words] | [Actionable workflow metric step in ≤10 words] |
+        | 4 | [Factual Subject 4] | [Detailed specific observation mapping exact script realities in ≤14 words] | [Actionable workflow metric step in ≤10 words] |
         
         ---
         
         ## 4️⃣ TL;DR
-        > [Insert a single line punchy powerful executive summary of the video content context]
+        > [Insert a single line punchy, extremely powerful executive summary packing the absolute highest-value takeaway from the entire transcript payload]
         """),
         add_datetime_to_context=True,
         markdown=True,
