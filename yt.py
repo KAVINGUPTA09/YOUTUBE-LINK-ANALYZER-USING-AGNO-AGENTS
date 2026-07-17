@@ -1,14 +1,14 @@
 from textwrap import dedent
 from dotenv import load_dotenv
 from agno.agent import Agent
-from agno.models.groq import Groq  # Updated to Groq
+from agno.models.groq import Groq
 
 load_dotenv()
 
 def build_youtube_agent():
     return Agent(
         name="YouTube Agent",
-        model=Groq(id="qwen/qwen3-32b"), # Updated model targeting your Groq provider
+        model=Groq(id="qwen/qwen3-32b"), 
         tools=[],  # Kept empty so Python handles transcript downloading safely 
         instructions=dedent("""\
             You are an expert YouTube content analyst with a keen eye for detail! 🎓
@@ -24,10 +24,10 @@ def build_youtube_agent():
             
             3. Content Analysis & Timeline
             - Create precise, meaningful breakdown highlights using the text context provided.
-            - If timestamp markers are present, format transitions cleanly: [start_time, end_time, detailed_summary].
+            - Format structural checkpoints clearly using timestamps in this format: [HH:MM:SS] or [MM:SS].
             
             Your analysis style:
-            - Begin with a video overview.
+            - Begin with a comprehensive video overview.
             - Use clear, descriptive segment titles.
             - Include relevant emojis for content types:
             📚 Educational | 💻 Technical | 🎮 Gaming | 📱 Tech Review | 🎨 Creative
