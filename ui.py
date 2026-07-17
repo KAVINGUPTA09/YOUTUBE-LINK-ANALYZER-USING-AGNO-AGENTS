@@ -1,6 +1,6 @@
 import streamlit as st
 import re
-from youtube_transcript_api import YouTubeTranscriptApi
+import youtube_transcript_api  # Import the module namespace cleanly
 from yt import build_youtube_agent
 
 st.set_page_config(
@@ -35,16 +35,13 @@ if video_url and button:
             
             transcript_context = ""
             try:
-                # FIX: We instantiate an instance of the class first to call list_transcripts cleanly
-                api_instance = YouTubeTranscriptApi()
-                transcript_obj = api_instance.list_transcripts(video_id)
-                
-                # Automatically fetches the primary available transcript text block (supports Arabic 'ar' and English 'en')
-                active_transcript = transcript_obj.find_transcript(['ar', 'en'])
-                transcript_data = active_transcript.fetch()
-                
-                # Format text with its duration positioning markers
-                transcript_context = " ".join([f"[{item['start']}] {item['text']}" for item in transcript_data])
+                # Direct module function call passing explicit fallback languages (Arabic and English)
+                transcript_list = youtube_transcript_api.YouTubeTranscriptApi.get_transcript(
+                    video_id, 
+                    languages=['ar', 'en']
+                )
+                # Combines transcript blocks with visual timing loops
+                transcript_context = " ".join([f"[{item['start']}] {item['text']}" for item in transcript_list])
             except Exception as e:
                 transcript_context = f"[System Alert: Captions unavailable or non-verbal presentation: {str(e)}]"
             
