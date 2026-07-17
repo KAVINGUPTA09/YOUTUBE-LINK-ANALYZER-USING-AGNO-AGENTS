@@ -35,7 +35,7 @@ if video_url and button:
                 # 1. Grab the library's official tools
                 yt_tools = YouTubeTools()
                 
-                # 2. Call the exact method from the package signature
+                # 2. Call the exact method from the Agno package signature
                 video_data = yt_tools.get_youtube_video_captions(url=video_url)
                 
                 # 3. Deliver text blocks straight into the prompt layer
