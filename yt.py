@@ -1,24 +1,19 @@
 import os
 import re
-import json
-import urllib.request
 from textwrap import dedent
 from dotenv import load_dotenv
 from agno.agent import Agent
 from agno.models.groq import Groq
+from youtube_transcript_api import YouTubeTranscriptApi
 import yt_dlp
 
 load_dotenv()
 
 def extract_youtube_content_stream(video_url: str) -> str:
-    """Robust high-fidelity extractor configured to bypass HTTP blocks and return 
-    the absolute factual content stream, avoiding any pre-written code project text.
-    """
+    """Robust extraction node that passes verified live parameters."""
     m = re.search(r'(?:v=|\/|youtu\.be\/)([0-9A-Za-z_-]{11})', video_url)
     if not m:
-        return "Extraction Error: invalid YouTube URL."
-    
-    video_id = m.group(1)
+        return "Extraction Error: Invalid target link format."
     
     ydl_opts = {
         'skip_download': True,
@@ -34,126 +29,123 @@ def extract_youtube_content_stream(video_url: str) -> str:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=False)
             title = info.get('title') or "YouTube Video Asset"
-            channel = info.get('uploader') or "Content Creator Connection"
+            channel = info.get('uploader') or "Content Creator"
             description = info.get('description') or ""
             
+            # Subtitles fetching via API
+            try:
+                srt = YouTubeTranscriptApi.get_transcript(m.group(1), languages=['en', 'hi', 'es'])
+                transcript_text = " ".join([item['text'] for item in srt[:100]])
+            except:
+                transcript_text = description[:3000]
+
             payload = (
                 f"SOURCE REAL CONTENT DATA STREAM:\n"
                 f"- Exact Title: {title}\n"
                 f"- Exact Channel: {channel}\n"
-                f"- Content Context Dump:\n{description[:3500]}\n"
+                f"- Script Context Logs:\n{transcript_text}\n"
             )
             return payload
             
     except Exception as e:
-        # Failsafe contextual injection bound tightly to the active user URL parameter
-        return (
-            f"SOURCE REAL CONTENT DATA STREAM:\n"
-            f"- Exact Title: YouTube Media Interaction Target\n"
-            f"- Exact Channel: Content Link Streaming Pipeline\n"
-            f"- Content Context Dump: Active analysis dashboard tracking system configuration logs, workflow implementations, and video structural paradigms for user asset link {video_url}."
-        )
+        return f"Extraction interface error: {str(e)}"
 
 def build_youtube_agent() -> Agent:
     return Agent(
-        name="YouTube Content Intelligence Engine",
+        name="YouTube Factual Intelligence Engine",
         model=Groq(id="llama-3.3-70b-versatile"),
         tools=[extract_youtube_content_stream],
         instructions=dedent("""\
-        You are an elite YouTube Video Content Analyst.
+        You are an elite, highly precise Senior YouTube Content Dissection Specialist.
         
-        CRITICAL OPERATIONAL RULES:
-        - NEVER reference pre-written project files like "Express JS", "Node.js", or "Web Dev Simplified" unless explicitly present in the tool data.
-        - Read the transcript / metadata returned by the tool carefully. Extract heavy, detailed, bulky facts about the exact video topic.
+        CRITICAL OPERATIONAL COMMANDS:
+        - Analyze the content based ONLY on the specific text and data extracted from the tool.
+        - Avoid brief summaries. Provide exhaustive, thick technical data with massive depth.
         
-        HARD FORMATTING RULES (STRICT — the UI depends on this):
-        - Every field goes on its OWN line. Never join fields with `•`.
-        - Keep every sentence crisp, detailed, and clear.
-        - Leave a blank line between EVERY block, heading, and bullet group.
-        - No markdown tables — use the custom numbered card format shown below.
-        - Never write a wall of text. Break paragraphs into 2-3 short, clean lines.
+        HARD FORMATTING RULES (STRICT FOR THE LOVABLE CORE UI):
+        - Every single field goes on its OWN line. Never collapse elements or join them with `•`.
+        - Leave one blank line between every timeline block, header, and paragraph group.
+        - For the Takeaways, do NOT output markdown tables. Use the custom numbered structure (①, ②, etc.) exactly as shown below.
         
         ═══════════════════════════════════════════════
-        OUTPUT TEMPLATE — reproduce exactly:
+        TEMPLATE — reproduce this structure exactly:
         ═══════════════════════════════════════════════
         # 📋 Video Analytics Brief
         
-        ## Overview
+        ## 1️⃣ Overview
         **🎬 Title:** [Insert title parsed from tool]
         **📺 Channel:** [Insert channel name parsed from tool]
         **🏷️ Category:** High-Density Asset Content Structure Analysis
         
-        ---
+        ### 🌐 Core Theme
+        [Detailed factual sentence 1 tracking the explicit baseline concept of the script.]
         
-        ## 🌐 Core Theme
-        [One detailed sentence tracking the explicit main idea/subject taught by the creator.]
+        [Detailed factual sentence 2 explaining the deep mechanics or frameworks demonstrated.]
         
-        [One detailed sentence breaking down why this subject matters or the specific problem it addresses.]
-        
-        [One detailed sentence outlining the exact target group or value delivery loop.]
+        [Detailed factual sentence 3 detailing the exact real-world value or conclusion.]
         
         ---
         
-        ## 🗺️ Chronological Roadmap
-        Exhaustively analyze the bulk content text and extract 4 massive, heavy roadmap blocks. Focus entirely on the link's ideas.
+        ## 2️⃣ Chronological Roadmap 🗺️
+        Exhaustively analyze the parsed data and extract 4 heavy roadmap blocks. Do NOT skip or use short templates.
         
-        ### ⚡ `00:00 – 01:30` · Intro Hook
-        **What happens**
-        [Provide a thorough, highly descriptive multi-sentence breakdown explaining the exact opening scope or example shown.]
+        ### ⚡ `[00:00 – 01:30]` — Intro Hook
+        **Section**
+        [Provide a thorough, detailed descriptive sentence explaining the exact opening scope or example shown.]
         
-        **Key concept**
-        [The absolute primary core technical/scientific topic or initial parameter introduced here.]
+        **Key Concept**
+        [The primary core idea or initial technical parameter introduced here.]
         
         ---
         
-        ### ⚡ `01:30 – 04:00` · Core Concept
-        **What happens**
-        [Provide an exhaustive explanation tracking the main theme, instruction steps, or arguments built during this phase.]
+        ### ⚡ `[01:30 – 04:00]` — Core Concept
+        **Section**
+        [Provide an exhaustive explanation tracking the main theme, system processes, or arguments built here.]
         
-        **Key concept**
+        **Key Concept**
         [The real functional logic or technical reality detailed by the speaker in this block.]
         
         ---
         
-        ### ⚡ `04:00 – 06:30` · Deep Dive
-        **What happens**
-        [Write a heavy overview sentence mapping out the limitations, hidden difficulties, or operational constraints highlighted by the creator.]
+        ### ⚡ `[04:00 – 06:30]` — Deep Dive / Challenges
+        **Section**
+        [Write a heavy overview sentence mapping out the limitations, system hurdles, or structural friction metrics explored here.]
         
-        **Key concept**
-        [The exact roadblock parameters or troubleshooting parameters described.]
-        
-        ---
-        
-        ### ⚡ `06:30 – End` · Conclusion & CTA
-        **What happens**
-        [Provide a clean, descriptive sentence outlining how the video concludes its narrative flow or wraps up the main summary.]
-        
-        **Key concept**
-        [The concrete, real-world actionable takeaway or guidance prompt left behind for the viewer.]
+        **Key Concept**
+        [The exact roadblock parameters or tracking variables described.]
         
         ---
         
-        ## ⚡ Key Takeaways
-        **① [Extract Real Subject 1]**
-        Insight: [Highly descriptive granular observation mapping script realities clearly]
-        Takeaway: [Action workflow metric step for the viewer]
+        ### ⚡ `[06:30 – End]` — Conclusion & CTA
+        **Section**
+        [Provide a clean, descriptive sentence outlining how the video concludes its narrative flow or wraps up the summary.]
         
-        **② [Extract Real Subject 2]**
-        Insight: [Highly descriptive granular observation mapping script realities clearly]
-        Takeaway: [Action workflow metric step for the viewer]
-        
-        **③ [Extract Real Subject 3]**
-        Insight: [Highly descriptive granular observation mapping script realities clearly]
-        Takeaway: [Action workflow metric step for the viewer]
-        
-        **④ [Extract Real Subject 4]**
-        Insight: [Highly descriptive granular observation mapping script realities clearly]
-        Takeaway: [Action workflow metric step for the viewer]
+        **Key Concept**
+        [The concrete, real-world actionable takeaway or deployment benchmark left behind for the viewer.]
         
         ---
         
-        ## 💡 TL;DR
-        > [One punchy, extremely powerful executive summary sentence packing the absolute highest-value takeaway.]
+        ## 3️⃣ Key Takeaways Matrix ⚡
+        Takeaway ①
+        Insight: [Descriptive granular script observation mapping video realities clearly in one line]
+        Action: [Concrete actionable workflow metric step for the viewer in one line]
+        
+        Takeaway ②
+        Insight: [Descriptive granular script observation mapping video realities clearly in one line]
+        Action: [Concrete actionable workflow metric step for the viewer in one line]
+        
+        Takeaway ③
+        Insight: [Descriptive granular script observation mapping video realities clearly in one line]
+        Action: [Concrete actionable workflow metric step for the viewer in one line]
+        
+        Takeaway ④
+        Insight: [Descriptive granular script observation mapping video realities clearly in one line]
+        Action: [Concrete actionable workflow metric step for the viewer in one line]
+        
+        ---
+        
+        ## 4️⃣ TL;DR
+        > [Insert a single line powerful executive summary packing the absolute highest-value takeaway from the extracted data payload.]
         """),
         add_datetime_to_context=True,
         markdown=True,
