@@ -1,6 +1,6 @@
 import streamlit as st
 import re
-import youtube_transcript_api  # Import the module namespace cleanly
+import youtube_transcript_api
 from yt import build_youtube_agent
 
 st.set_page_config(
@@ -10,7 +10,6 @@ st.set_page_config(
 
 st.title("🎥 AI Youtube Video Analyzer")
 
-# Helper function to extract the 11-character Video ID safely
 def extract_video_id(url):
     pattern = r'(?:https?://)?(?:www\.)?(?:youtube\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/\s]{11})'
     match = re.search(pattern, url)
@@ -35,20 +34,18 @@ if video_url and button:
             
             transcript_context = ""
             try:
-                # Direct module function call passing explicit fallback languages (Arabic and English)
-                transcript_list = youtube_transcript_api.YouTubeTranscriptApi.get_transcript(
-                    video_id, 
-                    languages=['ar', 'en']
-                )
-                # Combines transcript blocks with visual timing loops
+                # FOOLPROOF FIX: We call the standalone functional module method directly
+                transcript_list = youtube_transcript_api.YouTubeTranscriptApi.get_transcript(video_id)
                 transcript_context = " ".join([f"[{item['start']}] {item['text']}" for item in transcript_list])
             except Exception as e:
-                transcript_context = f"[System Alert: Captions unavailable or non-verbal presentation: {str(e)}]"
+                transcript_context = f"ERROR_FETCHING: {str(e)}"
             
-            # Neatly bundle the text down for the agent prompt
-            prompt_payload = f"Analyze this video link: {video_url}. Context transcript data: {transcript_context}"
-            
-            response = agent.run(prompt_payload)
-
-        st.markdown("### Analysis Report of Video:")
-        st.markdown(response.content)
+            # CRITICAL CHECK: If the transcript failed to download, show the error directly to the user
+            if "ERROR_FETCHING:" in transcript_context:
+                st.error(f"Failed to extract transcript from YouTube: {transcript_context}")
+            else:
+                prompt_payload = f"Analyze this video link: {video_url}. Context transcript data: {transcript_context}"
+                response = agent.run(prompt_payload)
+                
+                st.markdown("### Analysis Report of Video:")
+                st.markdown(response.content)
