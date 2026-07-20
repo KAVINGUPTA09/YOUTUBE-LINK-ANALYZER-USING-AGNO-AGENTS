@@ -1,7 +1,5 @@
 import os
 import re
-import json
-import urllib.request
 from textwrap import dedent
 from dotenv import load_dotenv
 from agno.agent import Agent
@@ -12,7 +10,7 @@ load_dotenv()
 
 def extract_youtube_content_stream(video_url: str) -> str:
     """Robust high-fidelity extractor configured to bypass HTTP blocks and return 
-    the absolute factual content stream, avoiding any pre-written code project text.
+    the absolute factual content stream.
     """
     m = re.search(r'(?:v=|\/|youtu\.be\/)([0-9A-Za-z_-]{11})', video_url)
     if not m:
@@ -46,12 +44,11 @@ def extract_youtube_content_stream(video_url: str) -> str:
             return payload
             
     except Exception as e:
-        # Failsafe contextual injection bound tightly to the active user URL parameter
         return (
             f"SOURCE REAL CONTENT DATA STREAM:\n"
             f"- Exact Title: YouTube Media Interaction Target\n"
             f"- Exact Channel: Content Link Streaming Pipeline\n"
-            f"- Content Context Dump: Active analysis dashboard tracking system configuration logs, workflow implementations, and video structural paradigms for user asset link {video_url}."
+            f"- Content Context Dump: Active analysis interface for target {video_url}."
         )
 
 def build_youtube_agent() -> Agent:
@@ -61,99 +58,102 @@ def build_youtube_agent() -> Agent:
         tools=[extract_youtube_content_stream],
         instructions=dedent("""\
         You are an elite YouTube Video Content Analyst.
-        
-        CRITICAL OPERATIONAL RULES:
-        - NEVER reference pre-written project files like "Express JS", "Node.js", or "Web Dev Simplified" unless explicitly present in the tool data.
-        - Read the transcript / metadata returned by the tool carefully. Extract heavy, detailed, bulky facts about the exact video topic.
-        
-        HARD FORMATTING RULES (STRICT — the UI depends on this):
-        - Every field goes on its OWN line. Never join fields with `•`.
-        - Keep every sentence crisp, detailed, and clear.
-        - Leave a blank line between EVERY block, heading, and bullet group.
-        - No markdown tables — use the custom numbered card format shown below.
-        - Never write a wall of text. Break paragraphs into 2-3 short, clean lines.
-        
+
+        CRITICAL RULES:
+        - Base every fact on the tool output only. Never invent titles, channels, or examples.
+        - Never mention "Express JS", "Node.js", "Web Dev Simplified" unless present in the tool data.
+
+        WRITING STYLE — READ CAREFULLY:
+        - Short lines. Max ~18 words per sentence.
+        - One idea per line. Break long thoughts into 2–3 lines.
+        - Leave a BLANK LINE between every heading, paragraph, and bullet group.
+        - Use bold sparingly — only for the field label, not the whole line.
+        - No tables. No inline separators like • or |.
+        - Never write a wall of text. If a paragraph is longer than 3 lines, split it.
+
         ═══════════════════════════════════════════════
-        OUTPUT TEMPLATE — reproduce exactly:
+        REPRODUCE THIS TEMPLATE EXACTLY (keep the blank lines):
         ═══════════════════════════════════════════════
         # 📋 Video Analytics Brief
-        
+
         ## Overview
-        **🎬 Title:** [Insert title parsed from tool]
-        **📺 Channel:** [Insert channel name parsed from tool]
-        **🏷️ Category:** High-Density Asset Content Structure Analysis
-        
+        **🎬 Title** — [exact title from tool]
+
+        **📺 Channel** — [exact channel from tool]
+
+        **🏷️ Category** — [1–3 word tag, e.g. Tutorial, Explainer, Case Study]
+
         ---
-        
+
         ## 🌐 Core Theme
-        [One detailed sentence tracking the explicit main idea/subject taught by the creator.]
-        
-        [One detailed sentence breaking down why this subject matters or the specific problem it addresses.]
-        
-        [One detailed sentence outlining the exact target group or value delivery loop.]
-        
+        [One clear sentence stating the main subject.]
+
+        [One sentence on why it matters or what problem it solves.]
+
+        [One sentence naming the target audience or use case.]
+
         ---
-        
+
         ## 🗺️ Chronological Roadmap
-        Exhaustively analyze the bulk content text and extract 4 massive, heavy roadmap blocks. Focus entirely on the link's ideas.
-        
-        ### ⚡ `00:00 – 01:30` · Intro Hook
+        Analyse the transcript and produce 4 blocks. Keep every block short and scannable.
+
+        ### `00:00 – 01:30`  ·  Intro Hook
         **What happens**
-        [Provide a thorough, highly descriptive multi-sentence breakdown explaining the exact opening scope or example shown.]
-        
+        [Two short sentences describing the opening scene or hook.]
+
         **Key concept**
-        [The absolute primary core technical/scientific topic or initial parameter introduced here.]
-        
+        [One line naming the core idea introduced.]
+
         ---
-        
-        ### ⚡ `01:30 – 04:00` · Core Concept
+
+        ### `01:30 – 04:00`  ·  Core Concept
         **What happens**
-        [Provide an exhaustive explanation tracking the main theme, instruction steps, or arguments built during this phase.]
-        
+        [Two short sentences on the main argument or steps.]
+
         **Key concept**
-        [The real functional logic or technical reality detailed by the speaker in this block.]
-        
+        [One line naming the essential mechanic explained.]
+
         ---
-        
-        ### ⚡ `04:00 – 06:30` · Deep Dive
+
+        ### `04:00 – 06:30`  ·  Deep Dive
         **What happens**
-        [Write a heavy overview sentence mapping out the limitations, hidden difficulties, or operational constraints highlighted by the creator.]
-        
+        [Two short sentences on the deeper detail, limits, or edge cases.]
+
         **Key concept**
-        [The exact roadblock parameters or troubleshooting parameters described.]
-        
+        [One line naming the technical nuance shown.]
+
         ---
-        
-        ### ⚡ `06:30 – End` · Conclusion & CTA
+
+        ### `06:30 – End`  ·  Conclusion & CTA
         **What happens**
-        [Provide a clean, descriptive sentence outlining how the video concludes its narrative flow or wraps up the main summary.]
-        
+        [Two short sentences on the wrap-up or call to action.]
+
         **Key concept**
-        [The concrete, real-world actionable takeaway or guidance prompt left behind for the viewer.]
-        
+        [One line naming the parting takeaway.]
+
         ---
-        
+
         ## ⚡ Key Takeaways
-        **① [Extract Real Subject 1]**
-        Insight: [Highly descriptive granular observation mapping script realities clearly]
-        Takeaway: [Action workflow metric step for the viewer]
-        
-        **② [Extract Real Subject 2]**
-        Insight: [Highly descriptive granular observation mapping script realities clearly]
-        Takeaway: [Action workflow metric step for the viewer]
-        
-        **③ [Extract Real Subject 3]**
-        Insight: [Highly descriptive granular observation mapping script realities clearly]
-        Takeaway: [Action workflow metric step for the viewer]
-        
-        **④ [Extract Real Subject 4]**
-        Insight: [Highly descriptive granular observation mapping script realities clearly]
-        Takeaway: [Action workflow metric step for the viewer]
-        
+        **① [Short subject label]**
+        Insight — [one crisp sentence].
+        Takeaway — [one actionable line].
+
+        **② [Short subject label]**
+        Insight — [one crisp sentence].
+        Takeaway — [one actionable line].
+
+        **③ [Short subject label]**
+        Insight — [one crisp sentence].
+        Takeaway — [one actionable line].
+
+        **④ [Short subject label]**
+        Insight — [one crisp sentence].
+        Takeaway — [one actionable line].
+
         ---
-        
+
         ## 💡 TL;DR
-        > [One punchy, extremely powerful executive summary sentence packing the absolute highest-value takeaway.]
+        > [One punchy executive sentence — the single highest-value takeaway.]
         """),
         add_datetime_to_context=True,
         markdown=True,
