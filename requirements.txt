@@ -1,6 +1,8 @@
 streamlit
 agno
 groq
-youtube-transcript-api
 python-dotenv
+youtube-transcript-api
 yt-dlp
+pandas
+numpy
