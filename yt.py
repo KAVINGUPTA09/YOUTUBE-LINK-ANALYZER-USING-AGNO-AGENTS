@@ -62,8 +62,8 @@ def build_youtube_agent(session_id: str = None) -> Agent:
     return Agent(
         name="YouTube Content Intelligence Engine",
         model=Groq(id="llama-3.3-70b-versatile"),
-        storage=agent_storage,  # 👈 Enables session & persistent state memory
-        session_id=session_id,  # 👈 Tracks specific video queries in DB
+        storage=agent_storage,  # Enables session & persistent state memory
+        session_id=session_id,  # Tracks specific video queries in DB
         tools=[extract_youtube_content_stream],
         instructions=dedent("""\
         You are an elite YouTube Video Content Analyst.
