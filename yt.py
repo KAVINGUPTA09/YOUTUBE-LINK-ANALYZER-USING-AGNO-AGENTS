@@ -4,6 +4,7 @@ from textwrap import dedent
 from dotenv import load_dotenv
 from agno.agent import Agent
 from agno.models.groq import Groq
+from agno.storage.agent.sqlite import SqliteAgentStorage
 import yt_dlp
 
 load_dotenv()
@@ -51,10 +52,18 @@ def extract_youtube_content_stream(video_url: str) -> str:
             f"- Content Context Dump: Active analysis interface for target {video_url}."
         )
 
-def build_youtube_agent() -> Agent:
+def build_youtube_agent(session_id: str = None) -> Agent:
+    # Local SQLite persistent storage database setup
+    agent_storage = SqliteAgentStorage(
+        table_name="youtube_agent_sessions",
+        db_file="insighttube.db"
+    )
+
     return Agent(
         name="YouTube Content Intelligence Engine",
         model=Groq(id="llama-3.3-70b-versatile"),
+        storage=agent_storage,  # 👈 Enables session & persistent state memory
+        session_id=session_id,  # 👈 Tracks specific video queries in DB
         tools=[extract_youtube_content_stream],
         instructions=dedent("""\
         You are an elite YouTube Video Content Analyst.
