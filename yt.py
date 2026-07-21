@@ -6,15 +6,6 @@ from agno.agent import Agent
 from agno.models.groq import Groq
 import yt_dlp
 
-# Safe import for SqliteAgentStorage
-try:
-    from agno.storage.agent.sqlite import SqliteAgentStorage
-except ImportError:
-    try:
-        from agno.storage.sqlite import SqliteAgentStorage
-    except ImportError:
-        SqliteAgentStorage = None
-
 load_dotenv()
 
 def extract_youtube_content_stream(video_url: str) -> str:
@@ -60,13 +51,12 @@ def extract_youtube_content_stream(video_url: str) -> str:
             f"- Content Context Dump: Active analysis interface for target {video_url}."
         )
 
-def build_youtube_agent(session_id: str = None) -> Agent:
-    """Builds the Agno YouTube Intelligence Agent without parameter syntax crashes."""
-    agent_kwargs = {
-        "name": "YouTube Content Intelligence Engine",
-        "model": Groq(id="llama-3.3-70b-versatile"),
-        "tools": [extract_youtube_content_stream],
-        "instructions": dedent("""\
+def build_youtube_agent() -> Agent:
+    return Agent(
+        name="YouTube Content Intelligence Engine",
+        model=Groq(id="llama-3.3-70b-versatile"),
+        tools=[extract_youtube_content_stream],
+        instructions=dedent("""\
         You are an elite YouTube Video Content Analyst.
 
         CRITICAL RULES:
@@ -165,28 +155,6 @@ def build_youtube_agent(session_id: str = None) -> Agent:
         ## 💡 TL;DR
         > [One punchy executive sentence — the single highest-value takeaway.]
         """),
-        "add_datetime_to_context": True,
-        "markdown": True,
-    }
-
-    # Dynamic Storage Assignment (Tries 'storage' then 'db' then safely falls back)
-    if SqliteAgentStorage is not None:
-        try:
-            storage_obj = SqliteAgentStorage(
-                table_name="youtube_agent_sessions",
-                db_file="insighttube.db"
-            )
-            # Try passing as storage first
-            try:
-                return Agent(**agent_kwargs, storage=storage_obj, session_id=session_id)
-            except TypeError:
-                # Fallback to db kwarg in newer Agno specs
-                try:
-                    return Agent(**agent_kwargs, db=storage_obj, session_id=session_id)
-                except TypeError:
-                    pass
-        except Exception:
-            pass
-
-    # Clean fallback if Agno version doesn't accept storage kwarg
-    return Agent(**agent_kwargs)
+        add_datetime_to_context=True,
+        markdown=True,
+    )
