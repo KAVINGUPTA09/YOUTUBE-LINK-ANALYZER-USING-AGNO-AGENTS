@@ -289,7 +289,7 @@ with st.sidebar:
         st.markdown(f'<div class="step"><span class="n">{i}</span>{txt}</div>', unsafe_allow_html=True)
         
     st.markdown('<div class="side-label">Build</div>', unsafe_allow_html=True)
-    st.markdown('<div style="color:#8a8a99; font-size:.78rem;">v3.3 · Live DB Logs Table</div>', unsafe_allow_html=True)
+    st.markdown('<div style="color:#8a8a99; font-size:.78rem;">v3.4 · Sanitized Live DB Engine</div>', unsafe_allow_html=True)
 
 # ─────────────────────────── Hero ───────────────────────────
 st.markdown("""
@@ -304,7 +304,7 @@ st.markdown("""
 st.markdown('<div class="input-wrap">', unsafe_allow_html=True)
 col_input, col_btn = st.columns([4, 1])
 with col_input:
-    video_url = st.text_input(
+    raw_video_url = st.text_input(
         "YouTube video URL",
         placeholder="https://www.youtube.com/watch?v=…",
         label_visibility="collapsed",
@@ -318,6 +318,13 @@ def extract_video_id(url: str):
     m = re.search(r'(?:v=|\/|youtu\.be\/)([0-9A-Za-z_-]{11})', url)
     return m.group(1) if m else None
 
+def clean_url(url: str) -> str:
+    """Removes trailing quotes, spaces, or invalid characters from user input."""
+    if not url:
+        return ""
+    cleaned = url.strip().strip('"').strip("'").strip()
+    return cleaned
+
 def section(num, title):
     st.markdown(
         f'<div class="section"><span class="num">{num}</span>'
@@ -326,6 +333,7 @@ def section(num, title):
     )
 
 if button:
+    video_url = clean_url(raw_video_url)
     if not video_url:
         st.warning("Paste a YouTube link first.")
     else:
@@ -333,6 +341,9 @@ if button:
         if not vid:
             st.error("That doesn't look like a valid YouTube URL.")
         else:
+            # Clean standardized video URL to avoid tool argument parsing crash
+            clean_yt_url = f"https://www.youtube.com/watch?v={vid}"
+
             # Target video
             section("01 / TARGET", "Video Preview")
             thumb_col, meta_col = st.columns([1.3, 1])
@@ -352,19 +363,20 @@ if button:
                     <div class="meta-label">Database Persistence</div>
                     <div class="meta-value" style="font-size:.9rem;color:#5eead4;">SQLite Logging Active</div>
                   </div>
-                  <a class="meta-cta" href="https://www.youtube.com/watch?v={vid}" target="_blank">↗  Open on YouTube</a>
+                  <a class="meta-cta" href="{clean_yt_url}" target="_blank">↗  Open on YouTube</a>
                 </div>
                 """, unsafe_allow_html=True)
 
             with st.spinner("Agno agent is executing analysis and logging to SQLite..."):
                 try:
                     agent = build_youtube_agent()
+                    # Pass clean standardized URL to agent
                     response = agent.run(
-                        f"Parse the content data and compile the explicit video analysis report for: {video_url}"
+                        f"Parse the content data and compile the explicit video analysis report for: {clean_yt_url}"
                     )
                     
-                    # 👈 Write session record to SQLite Database
-                    log_to_sqlite(vid, video_url, str(response.content))
+                    # Write session record to SQLite Database
+                    log_to_sqlite(vid, clean_yt_url, str(response.content))
 
                     # Telemetry
                     section("02 / SIGNAL", "Telemetry")
