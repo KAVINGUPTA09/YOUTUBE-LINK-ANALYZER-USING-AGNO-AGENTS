@@ -330,9 +330,8 @@ if button:
                 </div>
                 """, unsafe_allow_html=True)
 
-            with st.spinner("Agno agent is accessing SQLite storage and fetching brief…"):
+            with st.spinner("Agno agent is executing analysis and generating brief…"):
                 try:
-                    # Pass video_id as session_id to maintain database persistence for each video
                     agent = build_youtube_agent(session_id=f"session_{vid}")
                     response = agent.run(
                         f"Parse the content data and compile the explicit video analysis report for: {video_url}"
