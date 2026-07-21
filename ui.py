@@ -3,6 +3,7 @@ import re
 import pandas as pd
 import numpy as np
 import sqlite3
+from datetime import datetime
 from yt import build_youtube_agent
 
 # ─────────────────────────── Page Config ───────────────────────────
@@ -12,6 +13,30 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+
+# ─────────────────────────── Helper: DB Logger ───────────────────────────
+def log_to_sqlite(video_id: str, video_url: str, brief_content: str):
+    """Directly creates table and logs session data into insighttube.db"""
+    try:
+        conn = sqlite3.connect("insighttube.db")
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS youtube_analysis_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp TEXT,
+                video_id TEXT,
+                video_url TEXT,
+                brief_summary TEXT
+            )
+        """)
+        cursor.execute("""
+            INSERT INTO youtube_analysis_logs (timestamp, video_id, video_url, brief_summary)
+            VALUES (?, ?, ?, ?)
+        """, (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), video_id, video_url, brief_content))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        st.caption(f"SQLite Logging Error: {e}")
 
 # ─────────────────────────── Global Styling ───────────────────────────
 st.markdown("""
@@ -256,7 +281,7 @@ with st.sidebar:
     st.markdown('<div class="side-sub">Video Intelligence</div>', unsafe_allow_html=True)
     
     st.markdown('<div class="side-label">Engine Stack</div>', unsafe_allow_html=True)
-    for label in ["Agno Agent Loop", "Llama-3.3 · 70B Versatile", "SQLite Agent Storage", "YouTube Transcript API"]:
+    for label in ["Agno Agent Loop", "Llama-3.3 · 70B Versatile", "SQLite Logger Engine", "YouTube Transcript API"]:
         st.markdown(f'<div class="pill"><span class="dot"></span>{label}</div>', unsafe_allow_html=True)
         
     st.markdown('<div class="side-label">How to use</div>', unsafe_allow_html=True)
@@ -264,7 +289,7 @@ with st.sidebar:
         st.markdown(f'<div class="step"><span class="n">{i}</span>{txt}</div>', unsafe_allow_html=True)
         
     st.markdown('<div class="side-label">Build</div>', unsafe_allow_html=True)
-    st.markdown('<div style="color:#8a8a99; font-size:.78rem;">v3.2 · Live DB Inspector UI</div>', unsafe_allow_html=True)
+    st.markdown('<div style="color:#8a8a99; font-size:.78rem;">v3.3 · Live DB Logs Table</div>', unsafe_allow_html=True)
 
 # ─────────────────────────── Hero ───────────────────────────
 st.markdown("""
@@ -325,19 +350,22 @@ if button:
                   </div>
                   <div>
                     <div class="meta-label">Database Persistence</div>
-                    <div class="meta-value" style="font-size:.9rem;color:#5eead4;">SQLite Active</div>
+                    <div class="meta-value" style="font-size:.9rem;color:#5eead4;">SQLite Logging Active</div>
                   </div>
                   <a class="meta-cta" href="https://www.youtube.com/watch?v={vid}" target="_blank">↗  Open on YouTube</a>
                 </div>
                 """, unsafe_allow_html=True)
 
-            with st.spinner("Agno agent is executing analysis and generating brief…"):
+            with st.spinner("Agno agent is executing analysis and logging to SQLite..."):
                 try:
-                    agent = build_youtube_agent(session_id=f"session_{vid}")
+                    agent = build_youtube_agent()
                     response = agent.run(
                         f"Parse the content data and compile the explicit video analysis report for: {video_url}"
                     )
                     
+                    # 👈 Write session record to SQLite Database
+                    log_to_sqlite(vid, video_url, str(response.content))
+
                     # Telemetry
                     section("02 / SIGNAL", "Telemetry")
                     c1, c2, c3, c4 = st.columns(4)
@@ -371,30 +399,18 @@ if button:
                     st.markdown(response.content)
                     st.markdown('</div>', unsafe_allow_html=True)
                     
-                    # ── Live SQLite Database Inspector Section ──
-                    section("05 / DATABASE DATA", "Live SQLite Inspector")
+                    # ── Live SQLite Database Logs Section ──
+                    section("05 / DATABASE DATA", "Live SQLite Inspector Logs")
                     try:
                         conn = sqlite3.connect("insighttube.db")
-                        tables_df = pd.read_sql_query("SELECT name FROM sqlite_master WHERE type='table';", conn)
+                        logs_df = pd.read_sql_query("SELECT id, timestamp, video_id, video_url, brief_summary FROM youtube_analysis_logs ORDER BY id DESC;", conn)
                         
-                        if not tables_df.empty:
-                            st.caption(f"📊 **Database File:** `insighttube.db` | **Found Tables:** `{', '.join(tables_df['name'].tolist())}`")
-                            
-                            # Inspect the main sessions table
-                            target_table = tables_df['name'].iloc[0]
-                            db_records = pd.read_sql_query(f"SELECT * FROM {target_table} ORDER BY rowid DESC;", conn)
-                            
-                            if not db_records.empty:
-                                st.markdown("##### 📜 Recent Session Records in Database:")
-                                st.dataframe(db_records, use_container_width=True, height=250)
-                            else:
-                                st.warning(f"Table `{target_table}` is initialized, but no rows logged yet.")
-                        else:
-                            st.info("💡 SQLite Database `insighttube.db` created successfully.")
-                            
+                        st.caption("📊 **Database File:** `insighttube.db` | **Table:** `youtube_analysis_logs`")
+                        st.dataframe(logs_df, use_container_width=True, height=250)
+                        
                         conn.close()
                     except Exception as db_err:
-                        st.error(f"SQLite DB Inspector Exception: {db_err}")
+                        st.error(f"SQLite Inspector Read Error: {db_err}")
 
                     st.markdown('<div class="foot">Generated by InsightTube · Agno Agent Loop × Groq × SQLite Storage</div>', unsafe_allow_html=True)
                     
