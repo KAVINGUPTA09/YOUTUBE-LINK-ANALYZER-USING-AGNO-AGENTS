@@ -46,7 +46,7 @@ html, body, [class*="css"], .stApp{
 #MainMenu, footer, header {visibility:hidden;}
 .block-container{padding-top:2rem !important; max-width:1180px;}
 
-/* ───── Sidebar ───── */
+/* Sidebar */
 section[data-testid="stSidebar"]{
   background:linear-gradient(180deg,#0a0a12 0%,#08080e 100%) !important;
   border-right:1px solid var(--border);
@@ -71,7 +71,7 @@ section[data-testid="stSidebar"] *{color:var(--text) !important;}
 .step{font-size:.82rem; color:#c9c9d1; padding:.3rem 0; display:flex; gap:.6rem;}
 .step .n{width:18px; height:18px; border-radius:50%; background:var(--accent); color:#fff; font-size:.65rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:.15rem;}
 
-/* ───── Hero ───── */
+/* Hero */
 .hero{
   padding:3.5rem 0 2.5rem;
   border-bottom:1px solid var(--border);
@@ -107,7 +107,7 @@ section[data-testid="stSidebar"] *{color:var(--text) !important;}
   color:var(--muted); max-width:640px; margin:0;
 }
 
-/* ───── Input ───── */
+/* Input */
 .input-wrap{
   padding:1.25rem;
   background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
@@ -140,7 +140,7 @@ section[data-testid="stSidebar"] *{color:var(--text) !important;}
 }
 .stButton>button:hover{transform:translateY(-1px); box-shadow:0 14px 36px -10px rgba(255,61,90,.65) !important;}
 
-/* ───── Section headers ───── */
+/* Section headers */
 .section{
   display:flex; align-items:baseline; gap:.9rem;
   margin:2.6rem 0 1.2rem;
@@ -157,7 +157,7 @@ section[data-testid="stSidebar"] *{color:var(--text) !important;}
 }
 .section .rule{flex:1; height:1px; background:var(--border); margin-left:.5rem;}
 
-/* ───── Video preview card ───── */
+/* Video preview card */
 .meta-card{
   background:var(--surface); border:1px solid var(--border);
   border-radius:16px; padding:1.5rem;
@@ -174,7 +174,7 @@ section[data-testid="stSidebar"] *{color:var(--text) !important;}
 }
 .meta-cta:hover{background:var(--accent); border-color:var(--accent);}
 
-/* ───── Telemetry tiles ───── */
+/* Telemetry tiles */
 .tile{
   background:var(--surface); border:1px solid var(--border);
   border-radius:14px; padding:1.1rem 1.2rem;
@@ -185,7 +185,7 @@ section[data-testid="stSidebar"] *{color:var(--text) !important;}
 .tile .val{font-size:.98rem; font-weight:600; color:#fff; margin-bottom:.15rem;}
 .tile .lbl{font-size:.75rem; color:var(--muted); letter-spacing:.02em;}
 
-/* ───── Report card ───── */
+/* Report card */
 .report{
   background:linear-gradient(180deg,#12121b 0%,#0d0d14 100%);
   border:1px solid var(--border-2);
@@ -255,7 +255,7 @@ with st.sidebar:
     st.markdown('<div class="side-sub">Video Intelligence</div>', unsafe_allow_html=True)
     
     st.markdown('<div class="side-label">Engine Stack</div>', unsafe_allow_html=True)
-    for label in ["Agno Agent Loop", "Llama-3.3 · 70B Versatile", "YouTube Transcript API", "oEmbed Metadata"]:
+    for label in ["Agno Agent Loop", "Llama-3.3 · 70B Versatile", "SQLite Agent Storage", "YouTube Transcript API"]:
         st.markdown(f'<div class="pill"><span class="dot"></span>{label}</div>', unsafe_allow_html=True)
         
     st.markdown('<div class="side-label">How to use</div>', unsafe_allow_html=True)
@@ -263,14 +263,14 @@ with st.sidebar:
         st.markdown(f'<div class="step"><span class="n">{i}</span>{txt}</div>', unsafe_allow_html=True)
         
     st.markdown('<div class="side-label">Build</div>', unsafe_allow_html=True)
-    st.markdown('<div style="color:#8a8a99; font-size:.78rem;">v3.0 · Editorial Grade</div>', unsafe_allow_html=True)
+    st.markdown('<div style="color:#8a8a99; font-size:.78rem;">v3.1 · Stateful SQLite Engine</div>', unsafe_allow_html=True)
 
 # ─────────────────────────── Hero ───────────────────────────
 st.markdown("""
 <div class="hero">
-  <div class="hero-tag"><span class="live"></span>Live · Powered by Agno + Groq</div>
+  <div class="hero-tag"><span class="live"></span>Live · Powered by Agno + Groq + SQLite</div>
   <h1>Turn any YouTube video<br/>into a <em>decision-ready brief.</em></h1>
-  <p class="lede">Paste a link. Get a structured summary, key moments, and content insights — extracted straight from the transcript by an autonomous agent.</p>
+  <p class="lede">Paste a link. Get a structured summary, key moments, and content insights — extracted straight from the transcript by an autonomous agent with persistent SQLite memory.</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -323,16 +323,17 @@ if button:
                     <div class="meta-value">{vid}</div>
                   </div>
                   <div>
-                    <div class="meta-label">Source</div>
-                    <div class="meta-value" style="font-size:.9rem;">youtube.com</div>
+                    <div class="meta-label">Database Persistence</div>
+                    <div class="meta-value" style="font-size:.9rem;color:#5eead4;">SQLite Active</div>
                   </div>
                   <a class="meta-cta" href="https://www.youtube.com/watch?v={vid}" target="_blank">↗  Open on YouTube</a>
                 </div>
                 """, unsafe_allow_html=True)
 
-            with st.spinner("Agno agent is reading the transcript and composing the brief…"):
+            with st.spinner("Agno agent is accessing SQLite storage and fetching brief…"):
                 try:
-                    agent = build_youtube_agent()
+                    # Pass video_id as session_id to maintain database persistence for each video
+                    agent = build_youtube_agent(session_id=f"session_{vid}")
                     response = agent.run(
                         f"Parse the content data and compile the explicit video analysis report for: {video_url}"
                     )
@@ -342,7 +343,7 @@ if button:
                     c1, c2, c3, c4 = st.columns(4)
                     tiles = [
                         ("🌐", "English", "Subtitle locale"),
-                        ("🔒", "Secure", "Agent state"),
+                        ("🗄️", "SQLite Active", "Agent storage"),
                         ("⏱️", "Dynamic", "Chapter parsing"),
                         ("✅", "Verified", "Channel identity"),
                     ]
@@ -369,7 +370,7 @@ if button:
                     st.markdown('<div class="report">', unsafe_allow_html=True)
                     st.markdown(response.content)
                     st.markdown('</div>', unsafe_allow_html=True)
-                    st.markdown('<div class="foot">Generated by InsightTube · Agno × Groq</div>', unsafe_allow_html=True)
+                    st.markdown('<div class="foot">Generated by InsightTube · Agno Agent Loop × Groq × SQLite Storage</div>', unsafe_allow_html=True)
                     
                 except Exception as e:
                     st.error(f"Something went wrong: {e}")
